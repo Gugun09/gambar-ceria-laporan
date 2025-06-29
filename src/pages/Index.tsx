@@ -263,15 +263,17 @@ const Index = () => {
           </div>
         </div>
 
-        <!-- Report Info -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; font-size: 9px; flex-shrink: 0;">
-          <div>
-            <div style="margin-bottom: 2px; font-weight: 600; color: #1e3a8a;">Periode :</div>
-            <div>${reportData.period}</div>
+        <!-- Report Info - Using Requested Format -->
+        <div style="margin-bottom: 32px; font-size: 16px; flex-shrink: 0;">
+          <div style="display: flex; align-items: center; margin-bottom: 8px;">
+            <span style="font-weight: 700; color: #1e3a8a; min-width: 120px;">Periode</span>
+            <span style="margin: 0 12px; font-weight: 700;">:</span>
+            <span>${reportData.period}</span>
           </div>
-          <div>
-            <div style="margin-bottom: 2px; font-weight: 600; color: #1e3a8a;">Karyawan :</div>
-            <div>${reportData.employee}</div>
+          <div style="display: flex; align-items: center; margin-bottom: 8px;">
+            <span style="font-weight: 700; color: #1e3a8a; min-width: 120px;">Karyawan</span>
+            <span style="margin: 0 12px; font-weight: 700;">:</span>
+            <span>${reportData.employee}</span>
           </div>
         </div>
 

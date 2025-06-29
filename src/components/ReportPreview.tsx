@@ -36,7 +36,7 @@ const ReportPreview = ({ reportData }: ReportPreviewProps) => {
               </div>
             </div>
 
-            {/* Report Info Section - Reduced Spacing */}
+            {/* Report Info Section - Using Requested Format */}
             <div style={{ marginBottom: 32, fontSize: 16 }}>
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
                 <span style={{ fontWeight: 700, color: '#1e3a8a', minWidth: 120 }}>Periode</span>
