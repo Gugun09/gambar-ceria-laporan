@@ -6,6 +6,7 @@ import ReportForm from '@/components/ReportForm';
 import ReportPreview from '@/components/ReportPreview';
 import { Download, FileText, CheckCircle2, Zap, Shield, FileImage } from 'lucide-react';
 import { toast } from "@/components/ui/sonner";
+import html2canvas from 'html2canvas';
 
 export interface ReportData {
   title: string;
@@ -48,38 +49,7 @@ const Index = () => {
 
   const [isDownloading, setIsDownloading] = useState(false);
 
-  // Helper function to load image and return as canvas-drawable format
-  const loadImage = (src: string): Promise<HTMLImageElement> => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.onload = () => resolve(img);
-      img.onerror = reject;
-      img.src = src;
-    });
-  };
-
-  // Helper function to wrap text
-  const wrapText = (ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] => {
-    const words = text.split(' ');
-    const lines: string[] = [];
-    let currentLine = words[0];
-
-    for (let i = 1; i < words.length; i++) {
-      const word = words[i];
-      const width = ctx.measureText(currentLine + ' ' + word).width;
-      if (width < maxWidth) {
-        currentLine += ' ' + word;
-      } else {
-        lines.push(currentLine);
-        currentLine = word;
-      }
-    }
-    lines.push(currentLine);
-    return lines;
-  };
-
-  // Download PNG with unified table format
+  // Download PNG using html2canvas - same as preview
   const downloadAsPNG = async () => {
     setIsDownloading(true);
     try {
@@ -87,322 +57,75 @@ const Index = () => {
         description: "Sedang menggenerate file PNG dengan foto dan font yang lebih besar."
       });
 
-      // Create canvas with A4 dimensions (794x1123 pixels at 96 DPI)
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      
-      if (!ctx) {
-        throw new Error('Canvas context not available');
+      const element = document.getElementById('report-preview');
+      if (!element) {
+        throw new Error('Report preview element not found');
       }
 
-      canvas.width = 794;
-      canvas.height = 1123;
+      // Create a temporary container with fixed A4 dimensions for download
+      const tempContainer = document.createElement('div');
+      tempContainer.style.position = 'absolute';
+      tempContainer.style.left = '-9999px';
+      tempContainer.style.top = '0';
+      tempContainer.style.width = '794px';
+      tempContainer.style.height = '1123px';
+      tempContainer.style.backgroundColor = '#ffffff';
+      tempContainer.style.fontFamily = 'Arial, sans-serif';
       
-      // Fill white background
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      // Clone the preview element
+      const clonedElement = element.cloneNode(true) as HTMLElement;
       
-      // Set default text properties
-      ctx.fillStyle = '#000000';
-      ctx.textBaseline = 'top';
+      // Reset any responsive scaling for download
+      clonedElement.style.width = '794px';
+      clonedElement.style.height = '1123px';
+      clonedElement.style.maxWidth = 'none';
+      clonedElement.style.transform = 'none';
+      clonedElement.style.transformOrigin = 'none';
       
-      let yPosition = 40;
-      const leftMargin = 40;
-      const rightMargin = canvas.width - 40;
-      const contentWidth = rightMargin - leftMargin;
+      tempContainer.appendChild(clonedElement);
+      document.body.appendChild(tempContainer);
 
-      // Header Section
-      ctx.textAlign = 'center';
-      ctx.font = 'bold 24px Arial';
-      ctx.fillStyle = '#1e3a8a'; // blue-900
-      ctx.fillText(reportData.title, canvas.width / 2, yPosition);
-      yPosition += 35;
+      // Wait for images to load
+      const images = tempContainer.querySelectorAll('img');
+      await Promise.all(Array.from(images).map(img => {
+        if (img.complete) return Promise.resolve();
+        return new Promise((resolve, reject) => {
+          img.onload = resolve;
+          img.onerror = reject;
+          // Set a timeout to avoid hanging
+          setTimeout(resolve, 3000);
+        });
+      }));
 
-      ctx.font = '16px Arial';
-      ctx.fillStyle = '#1d4ed8'; // blue-700
-      ctx.fillText(reportData.address, canvas.width / 2, yPosition);
-      yPosition += 25;
-      ctx.fillText(reportData.company, canvas.width / 2, yPosition);
-      yPosition += 35;
-
-      // Header border line
-      ctx.strokeStyle = '#2563eb'; // blue-600
-      ctx.lineWidth = 4;
-      ctx.beginPath();
-      ctx.moveTo(leftMargin, yPosition);
-      ctx.lineTo(rightMargin, yPosition);
-      ctx.stroke();
-      yPosition += 25;
-
-      // Report Info Section
-      ctx.textAlign = 'left';
-      ctx.font = 'bold 14px Arial';
-      ctx.fillStyle = '#1e3a8a'; // blue-900
-      ctx.fillText('Periode :', leftMargin, yPosition);
-      yPosition += 20;
-      
-      ctx.font = '14px Arial';
-      ctx.fillStyle = '#000000';
-      const periodLines = wrapText(ctx, reportData.period, contentWidth / 2 - 20);
-      periodLines.forEach(line => {
-        ctx.fillText(line, leftMargin, yPosition);
-        yPosition += 18;
-      });
-
-      // Employee info (right side)
-      const employeeY = yPosition - (periodLines.length * 18) - 20;
-      ctx.font = 'bold 14px Arial';
-      ctx.fillStyle = '#1e3a8a'; // blue-900
-      ctx.fillText('Karyawan :', canvas.width / 2 + 20, employeeY);
-      
-      ctx.font = '14px Arial';
-      ctx.fillStyle = '#000000';
-      const employeeLines = wrapText(ctx, reportData.employee || 'N/A', contentWidth / 2 - 20);
-      let empY = employeeY + 20;
-      employeeLines.forEach(line => {
-        ctx.fillText(line, canvas.width / 2 + 20, empY);
-        empY += 18;
-      });
-
-      yPosition += 30;
-
-      // Unified Table with rounded corners and shadow effect
-      const tableStartY = yPosition;
-      const tableWidth = contentWidth;
-      const col1Width = tableWidth / 2;
-      const col2Width = tableWidth / 2;
-      const cornerRadius = 8;
-
-      // Draw table shadow (offset background)
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-      ctx.fillRect(leftMargin + 3, yPosition + 3, tableWidth, 40);
-
-      // Draw rounded table background
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.roundRect(leftMargin, yPosition, tableWidth, 40, cornerRadius);
-      ctx.fill();
-
-      // Table header with rounded top corners
-      ctx.fillStyle = '#2563eb'; // blue-600
-      ctx.beginPath();
-      ctx.roundRect(leftMargin, yPosition, tableWidth, 40, [cornerRadius, cornerRadius, 0, 0]);
-      ctx.fill();
-      
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 16px Arial'; // Increased header font size
-      ctx.textAlign = 'center';
-      ctx.fillText('Jumlah Cash Pick Up (NOA)', leftMargin + col1Width / 2, yPosition + 12);
-      ctx.fillText('Foto (Struk Terakhir)', leftMargin + col1Width + col2Width / 2, yPosition + 12);
-      
-      // Draw header borders with gray color
-      ctx.strokeStyle = '#d1d5db'; // gray-300
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.roundRect(leftMargin, yPosition, tableWidth, 40, [cornerRadius, cornerRadius, 0, 0]);
-      ctx.stroke();
-      
-      // Vertical separator
-      ctx.beginPath();
-      ctx.moveTo(leftMargin + col1Width, yPosition);
-      ctx.lineTo(leftMargin + col1Width, yPosition + 40);
-      ctx.stroke();
-      
-      yPosition += 40;
-
-      // Table content with larger row height for bigger images
-      if (reportData.items.length === 0) {
-        // Empty state with larger row
-        const rowHeight = 160; // Increased from 120
-        
-        // Draw row background
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(leftMargin, yPosition, tableWidth, rowHeight);
-        
-        // Draw borders
-        ctx.strokeStyle = '#d1d5db'; // gray-300
-        ctx.lineWidth = 1;
-        ctx.strokeRect(leftMargin, yPosition, tableWidth, rowHeight);
-        ctx.strokeRect(leftMargin + col1Width, yPosition, 1, rowHeight); // Vertical separator
-        
-        // Left column - quantity with larger font
-        ctx.fillStyle = '#2563eb'; // blue-600
-        ctx.font = 'bold 64px Arial'; // Increased from 48px
-        ctx.textAlign = 'center';
-        ctx.fillText('0', leftMargin + col1Width / 2, yPosition + 40);
-        
-        ctx.fillStyle = '#6b7280'; // gray-500
-        ctx.font = '12px Arial';
-        ctx.fillText('No items', leftMargin + col1Width / 2, yPosition + 120);
-        
-        // Right column - larger image placeholder
-        ctx.fillStyle = '#f3f4f6'; // gray-100
-        ctx.beginPath();
-        ctx.roundRect(leftMargin + col1Width + 20, yPosition + 20, col2Width - 40, 120, 8); // Increased height
-        ctx.fill();
-        
-        ctx.fillStyle = '#9ca3af'; // gray-400
-        ctx.font = '12px Arial';
-        ctx.fillText('No Image', leftMargin + col1Width + col2Width / 2, yPosition + 75);
-        
-        yPosition += rowHeight;
-      } else {
-        // Render items with larger images
-        for (const item of reportData.items) {
-          const rowHeight = 160; // Increased from 120
-          
-          // Draw row background
-          ctx.fillStyle = '#ffffff';
-          ctx.fillRect(leftMargin, yPosition, tableWidth, rowHeight);
-          
-          // Draw borders
-          ctx.strokeStyle = '#d1d5db'; // gray-300
-          ctx.lineWidth = 1;
-          ctx.strokeRect(leftMargin, yPosition, tableWidth, rowHeight);
-          ctx.strokeRect(leftMargin + col1Width, yPosition, 1, rowHeight); // Vertical separator
-          
-          // Left column - quantity with much larger font
-          ctx.fillStyle = '#2563eb'; // blue-600
-          ctx.font = 'bold 64px Arial'; // Increased from 48px
-          ctx.textAlign = 'center';
-          ctx.fillText(item.quantity || '-', leftMargin + col1Width / 2, yPosition + 50);
-          
-          // Right column - larger image area
-          const imageArea = {
-            x: leftMargin + col1Width + 15, // Reduced margin for more space
-            y: yPosition + 15, // Reduced margin for more space
-            width: col2Width - 30, // Increased width
-            height: 130 // Increased height from 80
-          };
-          
-          if (item.image) {
-            try {
-              const img = await loadImage(item.image);
-              
-              // Calculate aspect ratio and fit image
-              const imgAspect = img.width / img.height;
-              const areaAspect = imageArea.width / imageArea.height;
-              
-              let drawWidth, drawHeight, drawX, drawY;
-              
-              if (imgAspect > areaAspect) {
-                // Image is wider
-                drawWidth = imageArea.width;
-                drawHeight = imageArea.width / imgAspect;
-                drawX = imageArea.x;
-                drawY = imageArea.y + (imageArea.height - drawHeight) / 2;
-              } else {
-                // Image is taller
-                drawHeight = imageArea.height;
-                drawWidth = imageArea.height * imgAspect;
-                drawX = imageArea.x + (imageArea.width - drawWidth) / 2;
-                drawY = imageArea.y;
-              }
-              
-              // Draw image with rounded corners and border
-              ctx.save();
-              ctx.beginPath();
-              ctx.roundRect(drawX, drawY, drawWidth, drawHeight, 8);
-              ctx.clip();
-              ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
-              ctx.restore();
-              
-              // Add border around image
-              ctx.strokeStyle = '#d1d5db';
-              ctx.lineWidth = 1;
-              ctx.beginPath();
-              ctx.roundRect(drawX, drawY, drawWidth, drawHeight, 8);
-              ctx.stroke();
-            } catch (error) {
-              // Fallback if image fails to load
-              ctx.fillStyle = '#f3f4f6'; // gray-100
-              ctx.beginPath();
-              ctx.roundRect(imageArea.x, imageArea.y, imageArea.width, imageArea.height, 8);
-              ctx.fill();
-              
-              ctx.fillStyle = '#9ca3af'; // gray-400
-              ctx.font = '12px Arial';
-              ctx.textAlign = 'center';
-              ctx.fillText('Image Error', imageArea.x + imageArea.width / 2, imageArea.y + imageArea.height / 2);
-            }
-          } else {
-            // No image placeholder with larger size
-            ctx.fillStyle = '#f3f4f6'; // gray-100
-            ctx.beginPath();
-            ctx.roundRect(imageArea.x, imageArea.y, imageArea.width, imageArea.height, 8);
-            ctx.fill();
-            
-            ctx.fillStyle = '#9ca3af'; // gray-400
-            ctx.font = '12px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText('No Image', imageArea.x + imageArea.width / 2, imageArea.y + imageArea.height / 2);
+      // Generate canvas with high quality settings
+      const canvas = await html2canvas(tempContainer, {
+        scale: 2, // High resolution
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        width: 794,
+        height: 1123,
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: 794,
+        windowHeight: 1123,
+        onclone: (clonedDoc) => {
+          // Ensure all styles are properly applied in the cloned document
+          const clonedContainer = clonedDoc.querySelector('[id="report-preview"]');
+          if (clonedContainer) {
+            // Force specific styles for download consistency
+            (clonedContainer as HTMLElement).style.width = '794px';
+            (clonedContainer as HTMLElement).style.height = '1123px';
+            (clonedContainer as HTMLElement).style.maxWidth = 'none';
+            (clonedContainer as HTMLElement).style.transform = 'none';
           }
-          
-          yPosition += rowHeight;
         }
-      }
-
-      // Summary Section - Integrated without header
-      const summaryData = [
-        ['Pembukaan Tabungan (NOA)', reportData.summary.total || '-'],
-        ['Pembukaan Deposit (NOA)', reportData.summary.deposits || '-'],
-        ['Rekomendasi Kredit', reportData.summary.recommendations || '-']
-      ];
-      
-      summaryData.forEach(([label, value], index) => {
-        const rowHeight = 40;
-        const isLastRow = index === summaryData.length - 1;
-        
-        // Summary row background
-        ctx.fillStyle = '#2563eb'; // blue-600
-        if (isLastRow) {
-          // Last row with rounded bottom corners
-          ctx.beginPath();
-          ctx.roundRect(leftMargin, yPosition, tableWidth, rowHeight, [0, 0, cornerRadius, cornerRadius]);
-          ctx.fill();
-        } else {
-          ctx.fillRect(leftMargin, yPosition, tableWidth, rowHeight);
-        }
-        
-        // Summary text
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 14px Arial';
-        ctx.textAlign = 'left';
-        ctx.fillText(label, leftMargin + 20, yPosition + 15);
-        
-        ctx.textAlign = 'center';
-        ctx.font = 'bold 18px Arial';
-        ctx.fillText(value, leftMargin + tableWidth * 0.8, yPosition + 12);
-        
-        // Draw summary row border
-        ctx.strokeStyle = '#d1d5db'; // gray-300
-        if (isLastRow) {
-          ctx.beginPath();
-          ctx.roundRect(leftMargin, yPosition, tableWidth, rowHeight, [0, 0, cornerRadius, cornerRadius]);
-          ctx.stroke();
-        } else {
-          ctx.strokeRect(leftMargin, yPosition, tableWidth, rowHeight);
-        }
-        ctx.strokeRect(leftMargin + tableWidth * 0.65, yPosition, 1, rowHeight); // Vertical separator
-        
-        yPosition += rowHeight;
       });
 
-      // Draw final table border with rounded corners
-      ctx.strokeStyle = '#d1d5db'; // gray-300
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.roundRect(leftMargin, tableStartY, tableWidth, yPosition - tableStartY, cornerRadius);
-      ctx.stroke();
+      // Clean up temporary container
+      document.body.removeChild(tempContainer);
 
-      // Footer
-      yPosition = canvas.height - 50;
-      ctx.fillStyle = '#6b7280'; // gray-500
-      ctx.font = '10px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText(`Laporan dibuat pada: ${new Date().toLocaleString('id-ID')}`, canvas.width / 2, yPosition);
-      
-      // Download
+      // Download the image
       const link = document.createElement('a');
       link.download = `laporan-${reportData.employee || 'collection'}-${new Date().toISOString().split('T')[0]}.png`;
       link.href = canvas.toDataURL('image/png', 1.0);
@@ -444,6 +167,13 @@ const Index = () => {
                   print-color-adjust: exact;
                 }
                 .no-print { display: none !important; }
+                /* Ensure consistent styling for print */
+                #report-preview {
+                  width: 794px !important;
+                  height: 1123px !important;
+                  max-width: none !important;
+                  transform: none !important;
+                }
               </style>
             </head>
             <body>
