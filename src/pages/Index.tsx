@@ -166,19 +166,28 @@ const Index = () => {
 
       yPosition += 30;
 
-      // Unified Table - Main Content + Summary
+      // Unified Table with rounded corners and shadow effect
       const tableStartY = yPosition;
       const tableWidth = contentWidth;
       const col1Width = tableWidth / 2;
       const col2Width = tableWidth / 2;
+      const cornerRadius = 8;
 
-      // Draw table border
-      ctx.strokeStyle = '#d1d5db'; // gray-300
-      ctx.lineWidth = 1;
+      // Draw table shadow (offset background)
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+      ctx.fillRect(leftMargin + 3, yPosition + 3, tableWidth, 40);
 
-      // Table header
+      // Draw rounded table background
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.roundRect(leftMargin, yPosition, tableWidth, 40, cornerRadius);
+      ctx.fill();
+
+      // Table header with rounded top corners
       ctx.fillStyle = '#2563eb'; // blue-600
-      ctx.fillRect(leftMargin, yPosition, tableWidth, 40);
+      ctx.beginPath();
+      ctx.roundRect(leftMargin, yPosition, tableWidth, 40, [cornerRadius, cornerRadius, 0, 0]);
+      ctx.fill();
       
       ctx.fillStyle = '#ffffff';
       ctx.font = 'bold 14px Arial';
@@ -186,10 +195,18 @@ const Index = () => {
       ctx.fillText('Jumlah Cash Pick Up (NOA)', leftMargin + col1Width / 2, yPosition + 15);
       ctx.fillText('Foto (Struk Terakhir)', leftMargin + col1Width + col2Width / 2, yPosition + 15);
       
-      // Draw header borders
-      ctx.strokeStyle = '#1e40af'; // blue-800
-      ctx.strokeRect(leftMargin, yPosition, tableWidth, 40);
-      ctx.strokeRect(leftMargin + col1Width, yPosition, 1, 40); // Vertical separator
+      // Draw header borders with gray color
+      ctx.strokeStyle = '#d1d5db'; // gray-300
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(leftMargin, yPosition, tableWidth, 40, [cornerRadius, cornerRadius, 0, 0]);
+      ctx.stroke();
+      
+      // Vertical separator
+      ctx.beginPath();
+      ctx.moveTo(leftMargin + col1Width, yPosition);
+      ctx.lineTo(leftMargin + col1Width, yPosition + 40);
+      ctx.stroke();
       
       yPosition += 40;
 
@@ -197,6 +214,10 @@ const Index = () => {
       if (reportData.items.length === 0) {
         // Empty state
         const rowHeight = 120;
+        
+        // Draw row background
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(leftMargin, yPosition, tableWidth, rowHeight);
         
         // Draw borders
         ctx.strokeStyle = '#d1d5db'; // gray-300
@@ -214,9 +235,11 @@ const Index = () => {
         ctx.font = '12px Arial';
         ctx.fillText('No items', leftMargin + col1Width / 2, yPosition + 85);
         
-        // Right column - image placeholder
+        // Right column - image placeholder with rounded corners
         ctx.fillStyle = '#f3f4f6'; // gray-100
-        ctx.fillRect(leftMargin + col1Width + 20, yPosition + 20, col2Width - 40, 80);
+        ctx.beginPath();
+        ctx.roundRect(leftMargin + col1Width + 20, yPosition + 20, col2Width - 40, 80, 8);
+        ctx.fill();
         
         ctx.fillStyle = '#9ca3af'; // gray-400
         ctx.font = '12px Arial';
@@ -227,6 +250,10 @@ const Index = () => {
         // Render items
         for (const item of reportData.items) {
           const rowHeight = 120;
+          
+          // Draw row background
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(leftMargin, yPosition, tableWidth, rowHeight);
           
           // Draw borders
           ctx.strokeStyle = '#d1d5db'; // gray-300
@@ -249,7 +276,7 @@ const Index = () => {
             nameY += 14;
           });
           
-          // Right column - image
+          // Right column - image with rounded corners
           const imageArea = {
             x: leftMargin + col1Width + 20,
             y: yPosition + 20,
@@ -281,11 +308,19 @@ const Index = () => {
                 drawY = imageArea.y;
               }
               
+              // Draw image with rounded corners
+              ctx.save();
+              ctx.beginPath();
+              ctx.roundRect(drawX, drawY, drawWidth, drawHeight, 8);
+              ctx.clip();
               ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+              ctx.restore();
             } catch (error) {
               // Fallback if image fails to load
               ctx.fillStyle = '#f3f4f6'; // gray-100
-              ctx.fillRect(imageArea.x, imageArea.y, imageArea.width, imageArea.height);
+              ctx.beginPath();
+              ctx.roundRect(imageArea.x, imageArea.y, imageArea.width, imageArea.height, 8);
+              ctx.fill();
               
               ctx.fillStyle = '#9ca3af'; // gray-400
               ctx.font = '12px Arial';
@@ -293,9 +328,11 @@ const Index = () => {
               ctx.fillText('Image Error', imageArea.x + imageArea.width / 2, imageArea.y + imageArea.height / 2);
             }
           } else {
-            // No image placeholder
+            // No image placeholder with rounded corners
             ctx.fillStyle = '#f3f4f6'; // gray-100
-            ctx.fillRect(imageArea.x, imageArea.y, imageArea.width, imageArea.height);
+            ctx.beginPath();
+            ctx.roundRect(imageArea.x, imageArea.y, imageArea.width, imageArea.height, 8);
+            ctx.fill();
             
             ctx.fillStyle = '#9ca3af'; // gray-400
             ctx.font = '12px Arial';
@@ -307,35 +344,27 @@ const Index = () => {
         }
       }
 
-      // Summary Section - Integrated into the same table
-      // Summary header
-      ctx.fillStyle = '#1d4ed8'; // blue-700
-      ctx.fillRect(leftMargin, yPosition, tableWidth, 35);
-      
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 16px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText('RINGKASAN LAPORAN', leftMargin + tableWidth / 2, yPosition + 12);
-      
-      // Draw summary header border
-      ctx.strokeStyle = '#d1d5db'; // gray-300
-      ctx.strokeRect(leftMargin, yPosition, tableWidth, 35);
-      
-      yPosition += 35;
-
-      // Summary rows
+      // Summary Section - Integrated without header
       const summaryData = [
         ['Pembukaan Tabungan (NOA)', reportData.summary.total.toString()],
         ['Pembukaan Deposit (NOA)', reportData.summary.deposits.toString()],
         ['Rekomendasi Kredit', reportData.summary.recommendations.toString()]
       ];
       
-      summaryData.forEach(([label, value]) => {
+      summaryData.forEach(([label, value], index) => {
         const rowHeight = 40;
+        const isLastRow = index === summaryData.length - 1;
         
         // Summary row background
         ctx.fillStyle = '#2563eb'; // blue-600
-        ctx.fillRect(leftMargin, yPosition, tableWidth, rowHeight);
+        if (isLastRow) {
+          // Last row with rounded bottom corners
+          ctx.beginPath();
+          ctx.roundRect(leftMargin, yPosition, tableWidth, rowHeight, [0, 0, cornerRadius, cornerRadius]);
+          ctx.fill();
+        } else {
+          ctx.fillRect(leftMargin, yPosition, tableWidth, rowHeight);
+        }
         
         // Summary text
         ctx.fillStyle = '#ffffff';
@@ -348,16 +377,25 @@ const Index = () => {
         ctx.fillText(value, leftMargin + tableWidth * 0.8, yPosition + 12);
         
         // Draw summary row border
-        ctx.strokeStyle = '#1e40af'; // blue-800
-        ctx.strokeRect(leftMargin, yPosition, tableWidth, rowHeight);
+        ctx.strokeStyle = '#d1d5db'; // gray-300
+        if (isLastRow) {
+          ctx.beginPath();
+          ctx.roundRect(leftMargin, yPosition, tableWidth, rowHeight, [0, 0, cornerRadius, cornerRadius]);
+          ctx.stroke();
+        } else {
+          ctx.strokeRect(leftMargin, yPosition, tableWidth, rowHeight);
+        }
         ctx.strokeRect(leftMargin + tableWidth * 0.65, yPosition, 1, rowHeight); // Vertical separator
         
         yPosition += rowHeight;
       });
 
-      // Draw final table border
+      // Draw final table border with rounded corners
       ctx.strokeStyle = '#d1d5db'; // gray-300
-      ctx.strokeRect(leftMargin, tableStartY, tableWidth, yPosition - tableStartY);
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(leftMargin, tableStartY, tableWidth, yPosition - tableStartY, cornerRadius);
+      ctx.stroke();
 
       // Footer
       yPosition = canvas.height - 50;
@@ -502,7 +540,7 @@ const Index = () => {
                 <h2 className="text-3xl font-bold text-slate-900 mb-2">
                   Preview Laporan
                 </h2>
-                <p className="text-slate-600">Lihat hasil laporan dengan tabel yang terpadu</p>
+                <p className="text-slate-600">Lihat hasil laporan dengan tabel yang terpadu dan modern</p>
               </div>
               
               {/* Download Options */}
@@ -546,7 +584,7 @@ const Index = () => {
                     <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
                     <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                   </div>
-                  <span className="text-sm font-medium text-slate-600">Preview Mode - Tabel terpadu untuk tampilan yang lebih rapi</span>
+                  <span className="text-sm font-medium text-slate-600">Preview Mode - Tabel terpadu dengan border gray dan sudut melengkung</span>
                 </div>
               </div>
               <div className="p-2 sm:p-4 lg:p-6">
