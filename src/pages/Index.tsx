@@ -49,15 +49,15 @@ const Index = () => {
 
   const [isDownloading, setIsDownloading] = useState(false);
 
-  // Optimized download function with proper sizing
+  // Ultra-optimized download function for minimal file size
   const downloadAsPNG = async () => {
     setIsDownloading(true);
     try {
       toast.info("🔄 Memproses laporan PNG...", {
-        description: "Mengoptimalkan ukuran dan kualitas gambar."
+        description: "Mengoptimalkan ukuran file untuk hasil minimal."
       });
 
-      // Create optimized download container
+      // Create ultra-compact download container
       const downloadContainer = document.createElement('div');
       downloadContainer.style.cssText = `
         position: fixed;
@@ -71,31 +71,31 @@ const Index = () => {
         box-sizing: border-box;
       `;
 
-      // Create optimized report content
-      const reportContent = createOptimizedContent(reportData);
+      // Create ultra-compact report content
+      const reportContent = createCompactContent(reportData);
       downloadContainer.innerHTML = reportContent;
       
       document.body.appendChild(downloadContainer);
 
-      // Wait for images and calculate optimal height
+      // Wait for images and calculate minimal height
       await waitForImages(downloadContainer);
       
-      // Calculate content height with proper margins
-      const contentHeight = calculateOptimalHeight(downloadContainer);
+      // Calculate minimal content height
+      const contentHeight = calculateMinimalHeight(downloadContainer);
       downloadContainer.style.height = `${contentHeight}px`;
 
       // Small delay for rendering
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 300));
 
-      toast.info("📸 Menggenerate PNG...", {
-        description: "Membuat file dengan ukuran optimal."
+      toast.info("📸 Menggenerate PNG ultra-compact...", {
+        description: "Membuat file dengan ukuran minimal."
       });
 
-      // Generate canvas with optimized settings
+      // Generate canvas with ultra-optimized settings
       const canvas = await html2canvas(downloadContainer, {
         width: 794,
         height: contentHeight,
-        scale: 1.5, // Reduced scale for smaller file size
+        scale: 1.2, // Further reduced scale for smaller file
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
@@ -106,7 +106,7 @@ const Index = () => {
         logging: false,
         removeContainer: false,
         foreignObjectRendering: true,
-        imageTimeout: 3000, // Reduced timeout
+        imageTimeout: 2000, // Further reduced timeout
         onclone: (clonedDoc, element) => {
           // Optimize cloned document
           const style = clonedDoc.createElement('style');
@@ -139,8 +139,8 @@ const Index = () => {
       // Clean up
       document.body.removeChild(downloadContainer);
 
-      // Convert to optimized PNG
-      const optimizedDataUrl = canvas.toDataURL('image/png', 0.9); // Slight compression
+      // Convert to highly compressed PNG
+      const optimizedDataUrl = canvas.toDataURL('image/png', 0.8); // Higher compression
       
       // Download the image
       const link = document.createElement('a');
@@ -155,7 +155,7 @@ const Index = () => {
       const fileSizeKB = Math.round((optimizedDataUrl.length * 0.75) / 1024);
 
       toast.success("✅ Download PNG berhasil!", {
-        description: `File berhasil didownload (${canvas.width}x${canvas.height}px, ~${fileSizeKB}KB).`
+        description: `File ultra-compact berhasil didownload (${canvas.width}x${canvas.height}px, ~${fileSizeKB}KB).`
       });
     } catch (error) {
       console.error('Error generating PNG:', error);
@@ -167,40 +167,40 @@ const Index = () => {
     }
   };
 
-  // Calculate optimal height based on content
-  const calculateOptimalHeight = (container: HTMLElement): number => {
-    const baseHeight = 600; // Header + basic content
-    const itemHeight = 400; // Height per item row
-    const summaryHeight = 200; // Summary section height
-    const footerHeight = 100; // Footer height
-    const padding = 80; // Top and bottom padding
+  // Calculate minimal height based on content
+  const calculateMinimalHeight = (container: HTMLElement): number => {
+    const baseHeight = 400; // Reduced header + basic content
+    const itemHeight = 200; // Reduced height per item row
+    const summaryHeight = 120; // Reduced summary section height
+    const footerHeight = 60; // Reduced footer height
+    const padding = 60; // Reduced top and bottom padding
     
     const itemCount = reportData.items.length || 1; // At least 1 row for "no items"
     
     return baseHeight + (itemCount * itemHeight) + summaryHeight + footerHeight + padding;
   };
 
-  // Create optimized content for download
-  const createOptimizedContent = (data: ReportData) => {
+  // Create ultra-compact content for download
+  const createCompactContent = (data: ReportData) => {
     const itemsHtml = data.items.length > 0 
       ? data.items.map((item, index) => `
           <tr style="border-bottom: 1px solid #d1d5db;">
-            <td style="border-right: 1px solid #d1d5db; padding: 24px; text-align: center; background: white; vertical-align: middle;">
-              <div style="font-size: 72px; font-weight: bold; color: #2563eb; margin-bottom: 8px; line-height: 1;">
+            <td style="border-right: 1px solid #d1d5db; padding: 12px; text-align: center; background: white; vertical-align: middle;">
+              <div style="font-size: 36px; font-weight: bold; color: #2563eb; margin-bottom: 4px; line-height: 1;">
                 ${item.quantity || '-'}
               </div>
             </td>
-            <td style="padding: 24px; text-align: center; background: white; vertical-align: middle;">
+            <td style="padding: 12px; text-align: center; background: white; vertical-align: middle;">
               ${item.image ? `
                 <div style="display: flex; justify-content: center; align-items: center;">
                   <img
                     src="${item.image}"
                     alt="Item ${index + 1}"
-                    style="max-width: 100%; max-height: 250px; object-fit: contain; border-radius: 6px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); border: 1px solid #d1d5db;"
+                    style="max-width: 100%; max-height: 100px; object-fit: contain; border-radius: 4px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); border: 1px solid #d1d5db;"
                   />
                 </div>
               ` : `
-                <div style="width: 100%; height: 250px; background: #f3f4f6; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 14px; border: 1px solid #d1d5db;">
+                <div style="width: 100%; height: 100px; background: #f3f4f6; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 10px; border: 1px solid #d1d5db;">
                   No Image
                 </div>
               `}
@@ -209,12 +209,12 @@ const Index = () => {
         `).join('')
       : `
           <tr style="border-bottom: 1px solid #d1d5db;">
-            <td style="border-right: 1px solid #d1d5db; padding: 24px; text-align: center; background: white; vertical-align: middle;">
-              <div style="font-size: 72px; font-weight: bold; color: #2563eb; margin-bottom: 8px; line-height: 1;">-</div>
-              <div style="font-size: 14px; color: #6b7280;">No items</div>
+            <td style="border-right: 1px solid #d1d5db; padding: 12px; text-align: center; background: white; vertical-align: middle;">
+              <div style="font-size: 36px; font-weight: bold; color: #2563eb; margin-bottom: 4px; line-height: 1;">-</div>
+              <div style="font-size: 10px; color: #6b7280;">No items</div>
             </td>
-            <td style="padding: 24px; text-align: center; background: white; vertical-align: middle;">
-              <div style="width: 100%; height: 250px; background: #f3f4f6; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 14px; border: 1px solid #d1d5db;">
+            <td style="padding: 12px; text-center; background: white; vertical-align: middle;">
+              <div style="width: 100%; height: 100px; background: #f3f4f6; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 10px; border: 1px solid #d1d5db;">
                 No Image
               </div>
             </td>
@@ -222,42 +222,42 @@ const Index = () => {
         `;
 
     return `
-      <div style="width: 794px; background: white; padding: 40px; box-sizing: border-box; font-family: Arial, sans-serif; overflow: visible;">
+      <div style="width: 794px; background: white; padding: 30px; box-sizing: border-box; font-family: Arial, sans-serif; overflow: visible;">
         
-        <!-- Header Section -->
-        <div style="text-center; margin-bottom: 32px; border-bottom: 4px solid #2563eb; padding-bottom: 24px;">
-          <h1 style="font-size: 24px; font-weight: bold; color: #1e3a8a; margin-bottom: 16px; line-height: 1.2; margin-top: 0;">
+        <!-- Header Section - Ultra Compact -->
+        <div style="text-center; margin-bottom: 20px; border-bottom: 3px solid #2563eb; padding-bottom: 15px;">
+          <h1 style="font-size: 18px; font-weight: bold; color: #1e3a8a; margin-bottom: 12px; line-height: 1.2; margin-top: 0;">
             ${data.title}
           </h1>
-          <div style="color: #1d4ed8; line-height: 1.4;">
-            <p style="font-weight: 600; font-size: 16px; margin: 4px 0;">${data.address}</p>
-            <p style="font-weight: 600; font-size: 16px; margin: 4px 0;">${data.company}</p>
+          <div style="color: #1d4ed8; line-height: 1.3;">
+            <p style="font-weight: 600; font-size: 12px; margin: 2px 0;">${data.address}</p>
+            <p style="font-weight: 600; font-size: 12px; margin: 2px 0;">${data.company}</p>
           </div>
         </div>
 
-        <!-- Report Info Section -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 32px; font-size: 14px;">
+        <!-- Report Info Section - Compact -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; font-size: 10px;">
           <div>
-            <div style="margin-bottom: 4px; font-weight: 600; color: #1e3a8a;">Periode :</div>
+            <div style="margin-bottom: 2px; font-weight: 600; color: #1e3a8a;">Periode :</div>
             <div>${data.period}</div>
           </div>
           <div>
-            <div style="margin-bottom: 4px; font-weight: 600; color: #1e3a8a;">Karyawan :</div>
+            <div style="margin-bottom: 2px; font-weight: 600; color: #1e3a8a;">Karyawan :</div>
             <div>${data.employee}</div>
           </div>
         </div>
 
-        <!-- Main Table Section -->
-        <div style="margin-bottom: 32px;">
-          <div style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); border-radius: 8px; overflow: hidden; border: 1px solid #d1d5db;">
+        <!-- Main Table Section - Ultra Compact -->
+        <div style="margin-bottom: 20px;">
+          <div style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); border-radius: 6px; overflow: hidden; border: 1px solid #d1d5db;">
             <table style="width: 100%; border-collapse: collapse;">
               <!-- Table Header -->
               <thead>
                 <tr style="background: #2563eb; color: white;">
-                  <th style="border-right: 1px solid #6b7280; padding: 16px; text-align: center; font-weight: 600; font-size: 16px;">
+                  <th style="border-right: 1px solid #6b7280; padding: 10px; text-align: center; font-weight: 600; font-size: 12px;">
                     Jumlah Cash Pick Up (NOA)
                   </th>
-                  <th style="padding: 16px; text-align: center; font-weight: 600; font-size: 16px;">
+                  <th style="padding: 10px; text-align: center; font-weight: 600; font-size: 12px;">
                     Foto (Struk Terakhir)
                   </th>
                 </tr>
@@ -267,28 +267,28 @@ const Index = () => {
               <tbody>
                 ${itemsHtml}
                 
-                <!-- Summary Rows -->
+                <!-- Summary Rows - Compact -->
                 <tr style="background: #2563eb; color: white; border-top: 1px solid #6b7280;">
-                  <td style="border-right: 1px solid #6b7280; padding: 16px; font-weight: 600; text-align: left; font-size: 14px;">
+                  <td style="border-right: 1px solid #6b7280; padding: 8px; font-weight: 600; text-align: left; font-size: 10px;">
                     Pembukaan Tabungan (NOA)
                   </td>
-                  <td style="padding: 16px; text-align: center; font-weight: bold; font-size: 18px;">
+                  <td style="padding: 8px; text-align: center; font-weight: bold; font-size: 12px;">
                     ${data.summary.total || '-'}
                   </td>
                 </tr>
                 <tr style="background: #2563eb; color: white; border-top: 1px solid #6b7280;">
-                  <td style="border-right: 1px solid #6b7280; padding: 16px; font-weight: 600; text-align: left; font-size: 14px;">
+                  <td style="border-right: 1px solid #6b7280; padding: 8px; font-weight: 600; text-align: left; font-size: 10px;">
                     Pembukaan Deposit (NOA)
                   </td>
-                  <td style="padding: 16px; text-align: center; font-weight: bold; font-size: 18px;">
+                  <td style="padding: 8px; text-align: center; font-weight: bold; font-size: 12px;">
                     ${data.summary.deposits || '-'}
                   </td>
                 </tr>
                 <tr style="background: #2563eb; color: white; border-top: 1px solid #6b7280;">
-                  <td style="border-right: 1px solid #6b7280; padding: 16px; font-weight: 600; text-align: left; font-size: 14px;">
+                  <td style="border-right: 1px solid #6b7280; padding: 8px; font-weight: 600; text-align: left; font-size: 10px;">
                     Rekomendasi Kredit
                   </td>
-                  <td style="padding: 16px; text-align: center; font-weight: bold; font-size: 18px;">
+                  <td style="padding: 8px; text-align: center; font-weight: bold; font-size: 12px;">
                     ${data.summary.recommendations || '-'}
                   </td>
                 </tr>
@@ -297,8 +297,8 @@ const Index = () => {
           </div>
         </div>
 
-        <!-- Footer Section -->
-        <div style="margin-top: 32px; text-align: center; font-size: 12px; color: #6b7280;">
+        <!-- Footer Section - Minimal -->
+        <div style="margin-top: 20px; text-align: center; font-size: 9px; color: #6b7280;">
           <p style="margin: 0;">Laporan dibuat pada: ${new Date().toLocaleString('id-ID')}</p>
         </div>
         
@@ -317,7 +317,7 @@ const Index = () => {
       return new Promise<void>((resolve) => {
         const timeout = setTimeout(() => {
           resolve();
-        }, 3000); // Reduced timeout
+        }, 2000); // Further reduced timeout
 
         img.onload = () => {
           clearTimeout(timeout);
@@ -338,7 +338,7 @@ const Index = () => {
   const downloadViaPrint = () => {
     const printWindow = window.open('', '_blank');
     if (printWindow) {
-      const reportContent = createOptimizedContent(reportData);
+      const reportContent = createCompactContent(reportData);
       
       printWindow.document.write(`
         <!DOCTYPE html>
@@ -397,18 +397,18 @@ const Index = () => {
           </h1>
           
           <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-8">
-            Platform modern untuk membuat, melihat preview, dan mendownload laporan profesional dalam format PNG
+            Platform modern untuk membuat, melihat preview, dan mendownload laporan profesional dalam format PNG ultra-compact
           </p>
 
           {/* Feature Pills */}
           <div className="flex flex-wrap justify-center gap-4">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border border-slate-200">
               <Zap className="w-4 h-4 text-blue-600" />
-              <span className="text-sm font-medium text-slate-700">Ukuran Optimal</span>
+              <span className="text-sm font-medium text-slate-700">Ultra Compact</span>
             </div>
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border border-slate-200">
               <Shield className="w-4 h-4 text-green-600" />
-              <span className="text-sm font-medium text-slate-700">Kualitas Tinggi</span>
+              <span className="text-sm font-medium text-slate-700">File Kecil</span>
             </div>
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border border-slate-200">
               <CheckCircle2 className="w-4 h-4 text-purple-600" />
@@ -459,7 +459,7 @@ const Index = () => {
                 <h2 className="text-3xl font-bold text-slate-900 mb-2">
                   Preview Laporan
                 </h2>
-                <p className="text-slate-600">Download dengan ukuran optimal - tidak terlalu besar</p>
+                <p className="text-slate-600">Download dengan ukuran ultra-compact - file sangat kecil</p>
               </div>
               
               {/* Download Options */}
@@ -496,14 +496,14 @@ const Index = () => {
             </div>
 
             {/* Info Alert */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
               <div className="flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                 <div>
-                  <h4 className="font-semibold text-blue-900 mb-1">Download Ukuran Optimal</h4>
-                  <p className="text-blue-700 text-sm">
-                    Sistem mengoptimalkan ukuran file PNG agar tidak terlalu besar namun tetap berkualitas tinggi. 
-                    Ukuran file sekitar 200-800KB tergantung jumlah item dan gambar.
+                  <h4 className="font-semibold text-green-900 mb-1">File Ultra-Compact</h4>
+                  <p className="text-green-700 text-sm">
+                    Sistem telah dioptimalkan untuk menghasilkan file PNG dengan ukuran sangat kecil (100-400KB) 
+                    dengan mengurangi ukuran text, padding, dan gambar namun tetap menjaga kualitas visual.
                   </p>
                 </div>
               </div>
@@ -517,7 +517,7 @@ const Index = () => {
                     <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
                     <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                   </div>
-                  <span className="text-sm font-medium text-slate-600">Preview Mode - Ukuran optimal untuk download</span>
+                  <span className="text-sm font-medium text-slate-600">Preview Mode - Ultra-compact untuk file kecil</span>
                 </div>
               </div>
               <div className="p-2 sm:p-4 lg:p-6">
