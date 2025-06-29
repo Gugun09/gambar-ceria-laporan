@@ -75,7 +75,7 @@ const ReportPreview = ({ reportData }: ReportPreviewProps) => {
                         <tr key={item.id} className="border-b border-gray-300">
                           <td className="border-r border-gray-300 p-3 sm:p-6 text-center bg-white">
                             <div className="text-3xl sm:text-4xl lg:text-6xl font-bold text-blue-600 mb-1 sm:mb-2">
-                              {item.quantity}
+                              {item.quantity || '-'}
                             </div>
                           </td>
                           <td className="p-3 sm:p-6 text-center bg-white">
@@ -98,7 +98,7 @@ const ReportPreview = ({ reportData }: ReportPreviewProps) => {
                     ) : (
                       <tr className="border-b border-gray-300">
                         <td className="border-r border-gray-300 p-3 sm:p-6 text-center bg-white">
-                          <div className="text-3xl sm:text-4xl lg:text-6xl font-bold text-blue-600 mb-1 sm:mb-2">0</div>
+                          <div className="text-3xl sm:text-4xl lg:text-6xl font-bold text-blue-600 mb-1 sm:mb-2">-</div>
                           <div className="text-xs sm:text-sm text-gray-600">No items</div>
                         </td>
                         <td className="p-3 sm:p-6 text-center bg-white">

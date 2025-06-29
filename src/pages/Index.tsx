@@ -16,7 +16,7 @@ export interface ReportData {
   items: Array<{
     id: number;
     name: string;
-    quantity: number;
+    quantity: string; // Changed to string
     image?: string;
   }>;
   summary: {
@@ -265,7 +265,7 @@ const Index = () => {
           ctx.fillStyle = '#2563eb'; // blue-600
           ctx.font = 'bold 48px Arial';
           ctx.textAlign = 'center';
-          ctx.fillText(item.quantity.toString(), leftMargin + col1Width / 2, yPosition + 40);
+          ctx.fillText(item.quantity || '-', leftMargin + col1Width / 2, yPosition + 40);
           
           // Right column - image with rounded corners
           const imageArea = {

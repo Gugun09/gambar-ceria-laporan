@@ -40,7 +40,7 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
     const newItem = {
       id: Date.now(),
       name: '',
-      quantity: 0,
+      quantity: '', // Changed to empty string
       image: ''
     };
     setReportData({
@@ -257,12 +257,11 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
                       Jumlah
                     </Label>
                     <Input
-                      type="number"
+                      type="text"
                       value={item.quantity}
-                      onChange={(e) => updateItem(item.id, 'quantity', parseInt(e.target.value) || 0)}
+                      onChange={(e) => updateItem(item.id, 'quantity', e.target.value)}
                       className="h-10 border-slate-300 focus:border-slate-500 transition-colors"
-                      placeholder="0"
-                      min="0"
+                      placeholder="Masukkan jumlah"
                     />
                   </div>
                   
