@@ -1,3 +1,4 @@
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -92,8 +93,8 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-4">
+    <div className="space-y-6 px-2 sm:px-0">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="title" className="text-blue-900 font-semibold">Judul Laporan</Label>
           <Input
@@ -136,7 +137,9 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {selectedDate ? format(selectedDate, "PPP") : <span>Pilih tanggal</span>}
+                <span className="truncate">
+                  {selectedDate ? format(selectedDate, "PPP") : "Pilih tanggal"}
+                </span>
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
@@ -151,7 +154,7 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
           </Popover>
         </div>
         
-        <div>
+        <div className="lg:col-span-2">
           <Label htmlFor="employee" className="text-blue-900 font-semibold">Nama Karyawan</Label>
           <Input
             id="employee"
@@ -163,9 +166,9 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
       </div>
 
       <div className="space-y-4">
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
           <h3 className="text-xl font-semibold text-blue-900">Item Collection</h3>
-          <Button onClick={addItem} className="bg-blue-600 hover:bg-blue-700">
+          <Button onClick={addItem} className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
             <Plus className="w-4 h-4 mr-2" />
             Tambah Item
           </Button>
@@ -174,60 +177,66 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
         <div className="space-y-4">
           {reportData.items.map((item) => (
             <Card key={item.id} className="p-4 border-2 border-blue-200">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                <div>
-                  <Label className="text-blue-900 font-semibold">Nama Item</Label>
-                  <Input
-                    value={item.name}
-                    onChange={(e) => updateItem(item.id, 'name', e.target.value)}
-                    placeholder="Contoh: Whiskas Cat Food"
-                    className="mt-1"
-                  />
-                </div>
-                
-                <div>
-                  <Label className="text-blue-900 font-semibold">Jumlah</Label>
-                  <Input
-                    type="number"
-                    value={item.quantity}
-                    onChange={(e) => updateItem(item.id, 'quantity', parseInt(e.target.value) || 0)}
-                    className="mt-1"
-                  />
-                </div>
-                
-                <div>
-                  <Label className="text-blue-900 font-semibold">Upload Gambar</Label>
-                  <div className="flex gap-2 mt-1">
+              <div className="grid grid-cols-1 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-blue-900 font-semibold">Nama Item</Label>
                     <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleImageUpload(item.id, e)}
-                      className="hidden"
-                      id={`image-${item.id}`}
+                      value={item.name}
+                      onChange={(e) => updateItem(item.id, 'name', e.target.value)}
+                      placeholder="Contoh: Whiskas Cat Food"
+                      className="mt-1"
                     />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => document.getElementById(`image-${item.id}`)?.click()}
-                      className="flex-1"
-                    >
-                      <Upload className="w-4 h-4 mr-2" />
-                      Upload
-                    </Button>
+                  </div>
+                  
+                  <div>
+                    <Label className="text-blue-900 font-semibold">Jumlah</Label>
+                    <Input
+                      type="number"
+                      value={item.quantity}
+                      onChange={(e) => updateItem(item.id, 'quantity', parseInt(e.target.value) || 0)}
+                      className="mt-1"
+                    />
                   </div>
                 </div>
                 
-                <Button
-                  onClick={() => removeItem(item.id)}
-                  variant="destructive"
-                  size="sm"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
+                <div className="flex flex-col sm:flex-row gap-4 items-end">
+                  <div className="flex-1">
+                    <Label className="text-blue-900 font-semibold">Upload Gambar</Label>
+                    <div className="flex gap-2 mt-1">
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleImageUpload(item.id, e)}
+                        className="hidden"
+                        id={`image-${item.id}`}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => document.getElementById(`image-${item.id}`)?.click()}
+                        className="flex-1"
+                      >
+                        <Upload className="w-4 h-4 mr-2" />
+                        Upload
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <Button
+                    onClick={() => removeItem(item.id)}
+                    variant="destructive"
+                    size="sm"
+                    className="w-full sm:w-auto"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2 sm:mr-0" />
+                    <span className="sm:hidden">Hapus Item</span>
+                  </Button>
+                </div>
               </div>
               
               {item.image && (
-                <div className="mt-4">
+                <div className="mt-4 flex justify-center sm:justify-start">
                   <img
                     src={item.image}
                     alt={item.name}
@@ -242,7 +251,7 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
 
       <Card className="p-4 bg-blue-50 border-blue-200">
         <h3 className="text-xl font-semibold text-blue-900 mb-4">Summary</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
             <Label className="text-blue-900 font-semibold">Pembukaan Tabungan (NOA)</Label>
             <Input
@@ -275,7 +284,7 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
             />
           </div>
           
-          <div>
+          <div className="sm:col-span-2 lg:col-span-1">
             <Label className="text-blue-900 font-semibold">Rekomendasi Kredit</Label>
             <Input
               type="number"
