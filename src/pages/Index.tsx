@@ -58,6 +58,14 @@ const Index = () => {
           description: "Sedang menggenerate file PNG, mohon tunggu sebentar."
         });
 
+        // Temporarily reset any responsive scaling for download
+        const originalTransform = element.style.transform;
+        const originalMaxWidth = element.style.maxWidth;
+        
+        // Ensure A4 dimensions for download
+        element.style.transform = 'scale(1)';
+        element.style.maxWidth = '794px';
+
         const canvas = await html2canvas(element, {
           scale: 2,
           useCORS: true,
@@ -66,6 +74,10 @@ const Index = () => {
           width: 794,
           height: 1123,
         });
+        
+        // Restore original styles
+        element.style.transform = originalTransform;
+        element.style.maxWidth = originalMaxWidth;
         
         const link = document.createElement('a');
         link.download = `laporan-${reportData.employee || 'collection'}-${new Date().toISOString().split('T')[0]}.png`;
@@ -194,7 +206,8 @@ const Index = () => {
                   ) : (
                     <>
                       <Download className="w-5 h-5 mr-3" />
-                      <span>Download PNG (A4)</span>
+                      <span className="hidden sm:inline">Download PNG (A4)</span>
+                      <span className="sm:hidden">Download</span>
                     </>
                   )}
                 </Button>
@@ -208,10 +221,10 @@ const Index = () => {
                       <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
                       <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                     </div>
-                    <span className="text-sm font-medium text-slate-600">Preview Mode</span>
+                    <span className="text-sm font-medium text-slate-600">Preview Mode - Responsive</span>
                   </div>
                 </div>
-                <div className="p-4 sm:p-6 lg:p-8">
+                <div className="p-2 sm:p-4 lg:p-6">
                   <ReportPreview reportData={reportData} />
                 </div>
               </Card>
