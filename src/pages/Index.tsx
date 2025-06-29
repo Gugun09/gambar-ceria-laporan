@@ -123,6 +123,10 @@ const Index = () => {
               border-collapse: collapse !important;
               width: 100% !important;
             }
+            td, th {
+              text-align: center !important;
+              vertical-align: middle !important;
+            }
             .a4-container {
               width: ${A4_CONFIG.width}px !important;
               height: ${A4_CONFIG.height}px !important;
@@ -197,41 +201,49 @@ const Index = () => {
     return element;
   };
 
-  // Generate A4 optimized report HTML
+  // Generate A4 optimized report HTML with perfect center alignment
   const generateA4ReportHTML = (): string => {
     const itemsHTML = reportData.items.length > 0 
       ? reportData.items.map((item, index) => `
           <tr style="border-bottom: 1px solid #d1d5db;">
             <td style="border-right: 1px solid #d1d5db; padding: 8px; text-align: center; background: white; vertical-align: middle; width: 50%;">
-              <div style="font-size: 28px; font-weight: bold; color: #2563eb; margin-bottom: 2px; line-height: 1;">
-                ${item.quantity || '-'}
+              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 140px;">
+                <div style="font-size: 28px; font-weight: bold; color: #2563eb; line-height: 1;">
+                  ${item.quantity || '-'}
+                </div>
               </div>
             </td>
             <td style="padding: 8px; text-align: center; background: white; vertical-align: middle; width: 50%;">
-              ${item.image ? `
-                <img
-                  src="${item.image}"
-                  alt="Item ${index + 1}"
-                  style="max-width: 100%; max-height: 80px; object-fit: contain; border-radius: 4px; border: 1px solid #d1d5db;"
-                  crossorigin="anonymous"
-                />
-              ` : `
-                <div style="width: 100%; height: 80px; background: #f3f4f6; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 10px; border: 1px solid #d1d5db;">
-                  No Image
-                </div>
-              `}
+              <div style="display: flex; align-items: center; justify-content: center; height: 100%; min-height: 140px;">
+                ${item.image ? `
+                  <img
+                    src="${item.image}"
+                    alt="Item ${index + 1}"
+                    style="max-width: 100%; max-height: 120px; object-fit: contain; border-radius: 4px; border: 1px solid #d1d5db;"
+                    crossorigin="anonymous"
+                  />
+                ` : `
+                  <div style="width: 200px; height: 120px; background: #f3f4f6; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 10px; border: 1px solid #d1d5db;">
+                    No Image
+                  </div>
+                `}
+              </div>
             </td>
           </tr>
         `).join('')
       : `
           <tr style="border-bottom: 1px solid #d1d5db;">
             <td style="border-right: 1px solid #d1d5db; padding: 8px; text-align: center; background: white; vertical-align: middle;">
-              <div style="font-size: 28px; font-weight: bold; color: #2563eb; margin-bottom: 2px; line-height: 1;">-</div>
-              <div style="font-size: 9px; color: #6b7280;">No items</div>
+              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 140px;">
+                <div style="font-size: 28px; font-weight: bold; color: #2563eb; line-height: 1;">-</div>
+                <div style="font-size: 9px; color: #6b7280; margin-top: 4px;">No items</div>
+              </div>
             </td>
             <td style="padding: 8px; text-align: center; background: white; vertical-align: middle;">
-              <div style="width: 100%; height: 80px; background: #f3f4f6; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 10px; border: 1px solid #d1d5db;">
-                No Image
+              <div style="display: flex; align-items: center; justify-content: center; height: 100%; min-height: 140px;">
+                <div style="width: 200px; height: 120px; background: #f3f4f6; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 10px; border: 1px solid #d1d5db;">
+                  No Image
+                </div>
               </div>
             </td>
           </tr>
@@ -268,10 +280,10 @@ const Index = () => {
           <table style="width: 100%; border-collapse: collapse; border: 1px solid #d1d5db; border-radius: 6px; overflow: hidden; flex: 1;">
             <thead>
               <tr style="background: #2563eb; color: white;">
-                <th style="border-right: 1px solid #6b7280; padding: 8px; text-align: center; font-weight: 600; font-size: 11px; width: 50%;">
+                <th style="border-right: 1px solid #6b7280; padding: 8px; text-align: center; font-weight: 600; font-size: 11px; width: 50%; vertical-align: middle;">
                   Jumlah Cash Pick Up (NOA)
                 </th>
-                <th style="padding: 8px; text-align: center; font-weight: 600; font-size: 11px; width: 50%;">
+                <th style="padding: 8px; text-align: center; font-weight: 600; font-size: 11px; width: 50%; vertical-align: middle;">
                   Foto (Struk Terakhir)
                 </th>
               </tr>
@@ -281,27 +293,33 @@ const Index = () => {
               
               <!-- Summary -->
               <tr style="background: #2563eb; color: white; border-top: 1px solid #6b7280;">
-                <td style="border-right: 1px solid #6b7280; padding: 6px; font-weight: 600; text-align: left; font-size: 9px;">
+                <td style="border-right: 1px solid #6b7280; padding: 6px; font-weight: 600; text-align: center; font-size: 9px; vertical-align: middle;">
                   Pembukaan Tabungan (NOA)
                 </td>
-                <td style="padding: 6px; text-align: center; font-weight: bold; font-size: 10px;">
-                  ${reportData.summary.total || '-'}
+                <td style="padding: 6px; text-align: center; font-weight: bold; font-size: 10px; vertical-align: middle;">
+                  <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
+                    ${reportData.summary.total || '-'}
+                  </div>
                 </td>
               </tr>
               <tr style="background: #2563eb; color: white; border-top: 1px solid #6b7280;">
-                <td style="border-right: 1px solid #6b7280; padding: 6px; font-weight: 600; text-align: left; font-size: 9px;">
+                <td style="border-right: 1px solid #6b7280; padding: 6px; font-weight: 600; text-align: center; font-size: 9px; vertical-align: middle;">
                   Pembukaan Deposit (NOA)
                 </td>
-                <td style="padding: 6px; text-align: center; font-weight: bold; font-size: 10px;">
-                  ${reportData.summary.deposits || '-'}
+                <td style="padding: 6px; text-align: center; font-weight: bold; font-size: 10px; vertical-align: middle;">
+                  <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
+                    ${reportData.summary.deposits || '-'}
+                  </div>
                 </td>
               </tr>
               <tr style="background: #2563eb; color: white; border-top: 1px solid #6b7280;">
-                <td style="border-right: 1px solid #6b7280; padding: 6px; font-weight: 600; text-align: left; font-size: 9px;">
+                <td style="border-right: 1px solid #6b7280; padding: 6px; font-weight: 600; text-align: center; font-size: 9px; vertical-align: middle;">
                   Rekomendasi Kredit
                 </td>
-                <td style="padding: 6px; text-align: center; font-weight: bold; font-size: 10px;">
-                  ${reportData.summary.recommendations || '-'}
+                <td style="padding: 6px; text-align: center; font-weight: bold; font-size: 10px; vertical-align: middle;">
+                  <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
+                    ${reportData.summary.recommendations || '-'}
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -368,6 +386,10 @@ const Index = () => {
               table {
                 border-collapse: collapse;
                 width: 100%;
+              }
+              td, th {
+                text-align: center !important;
+                vertical-align: middle !important;
               }
               img {
                 max-width: 100%;

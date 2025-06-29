@@ -52,95 +52,107 @@ const ReportPreview = ({ reportData }: ReportPreviewProps) => {
               </div>
             </div>
 
-            {/* Main Table Section - Compact Design */}
+            {/* Main Table Section - Perfect Center Alignment */}
             <div className="mb-6">
               <div className="shadow-lg rounded-lg overflow-hidden border border-gray-300">
                 <table className="w-full border-collapse">
-                  {/* Table Header - Smaller Text */}
+                  {/* Table Header - Perfect Center */}
                   <thead>
                     <tr className="bg-blue-600 text-white">
-                      <th className="border-r border-gray-400 p-3 text-center font-semibold text-sm">
+                      <th className="border-r border-gray-400 p-3 text-center font-semibold text-sm align-middle">
                         Jumlah Cash Pick Up (NOA)
                       </th>
-                      <th className="p-3 text-center font-semibold text-sm">
+                      <th className="p-3 text-center font-semibold text-sm align-middle">
                         Foto (Struk Terakhir)
                       </th>
                     </tr>
                   </thead>
                   
-                  {/* Table Body - Items with Reduced Sizes */}
+                  {/* Table Body - Perfect Center Alignment */}
                   <tbody>
                     {reportData.items.length > 0 ? (
                       reportData.items.map((item, index) => (
                         <tr key={item.id} className="border-b border-gray-300">
-                          {/* Quantity Column - Much Smaller Text */}
-                          <td className="border-r border-gray-300 p-4 text-center bg-white">
-                            <div className="text-4xl font-bold text-blue-600 mb-1 leading-none">
-                              {item.quantity || '-'}
+                          {/* Quantity Column - Perfect Vertical & Horizontal Center */}
+                          <td className="border-r border-gray-300 p-4 text-center bg-white align-middle">
+                            <div className="flex flex-col items-center justify-center h-full">
+                              <div className="text-4xl font-bold text-blue-600 leading-none">
+                                {item.quantity || '-'}
+                              </div>
                             </div>
                           </td>
-                          {/* Image Column - Smaller Images */}
-                          <td className="p-4 text-center bg-white">
-                            {item.image ? (
-                              <div className="flex justify-center">
+                          {/* Image Column - Perfect Center */}
+                          <td className="p-4 text-center bg-white align-middle">
+                            <div className="flex items-center justify-center h-full">
+                              {item.image ? (
                                 <img
                                   src={item.image}
                                   alt={`Item ${index + 1}`}
                                   className="max-w-full h-32 object-contain rounded-lg shadow-md border border-gray-200"
                                   style={{ maxHeight: '128px' }}
                                 />
-                              </div>
-                            ) : (
-                              <div 
-                                className="w-full bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs shadow-inner border border-gray-200"
-                                style={{ height: '128px' }}
-                              >
-                                No Image
-                              </div>
-                            )}
+                              ) : (
+                                <div 
+                                  className="w-full bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs shadow-inner border border-gray-200"
+                                  style={{ height: '128px', minWidth: '200px' }}
+                                >
+                                  No Image
+                                </div>
+                              )}
+                            </div>
                           </td>
                         </tr>
                       ))
                     ) : (
                       <tr className="border-b border-gray-300">
-                        <td className="border-r border-gray-300 p-4 text-center bg-white">
-                          <div className="text-4xl font-bold text-blue-600 mb-1 leading-none">-</div>
-                          <div className="text-xs text-gray-600">No items</div>
+                        <td className="border-r border-gray-300 p-4 text-center bg-white align-middle">
+                          <div className="flex flex-col items-center justify-center h-full">
+                            <div className="text-4xl font-bold text-blue-600 leading-none">-</div>
+                            <div className="text-xs text-gray-600 mt-1">No items</div>
+                          </div>
                         </td>
-                        <td className="p-4 text-center bg-white">
-                          <div 
-                            className="w-full bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs shadow-inner border border-gray-200"
-                            style={{ height: '128px' }}
-                          >
-                            No Image
+                        <td className="p-4 text-center bg-white align-middle">
+                          <div className="flex items-center justify-center h-full">
+                            <div 
+                              className="w-full bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs shadow-inner border border-gray-200"
+                              style={{ height: '128px', minWidth: '200px' }}
+                            >
+                              No Image
+                            </div>
                           </div>
                         </td>
                       </tr>
                     )}
                     
-                    {/* Summary Rows - Compact Design */}
+                    {/* Summary Rows - Perfect Center Alignment */}
                     <tr className="bg-blue-600 text-white border-t border-gray-400">
-                      <td className="border-r border-gray-400 p-3 font-semibold text-left text-xs">
+                      <td className="border-r border-gray-400 p-3 font-semibold text-center text-xs align-middle">
                         Pembukaan Tabungan (NOA)
                       </td>
-                      <td className="p-3 text-center font-bold text-sm">
-                        {reportData.summary.total || '-'}
+                      <td className="p-3 text-center font-bold text-sm align-middle">
+                        <div className="flex items-center justify-center h-full">
+                          {reportData.summary.total || '-'}
+                        </div>
                       </td>
                     </tr>
                     <tr className="bg-blue-600 text-white border-t border-gray-400">
-                      <td className="border-r border-gray-400 p-3 font-semibold text-left text-xs">
+                      <td className="border-r border-gray-400 p-3 font-semibold text-center text-xs align-middle">
                         Pembukaan Deposit (NOA)
                       </td>
-                      <td className="p-3 text-center font-bold text-sm">
-                        {reportData.summary.deposits || '-'}
+                      <td className="p-3 text-center font-bold text-sm align-middle">
+                        <div className="flex items-center justify-center h-full">
+                          {reportData.summary.deposits || '-'}
+                        </div>
                       </td>
                     </tr>
                     <tr className="bg-blue-600 text-white border-t border-gray-400">
-                      <td className="border-r border-gray-400 p-3 font-semibold text-left text-xs">
+                      <td className="border-r border-gray-400 p-3 font-semibold text-center text-xs align-middle">
                         Rekomendasi Kredit
                       </td>
-                      <td className="p-3 text-center font-bold text-sm">
-                        {reportData.summary.recommendations || '-'}
+                      <td className="p-3 text-center font-bold text-sm align-middle">
+                        <div className="flex items-center justify-center h-full">
+                          {reportData.summary.recommendations || '-'}
+                        </div>
                       </td>
                     </tr>
                   </tbody>
