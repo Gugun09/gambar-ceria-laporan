@@ -17,7 +17,7 @@ export interface ReportData {
   items: Array<{
     id: number;
     name: string;
-    quantity: string; // Changed to string
+    quantity: string;
     image?: string;
   }>;
   summary: {
@@ -49,103 +49,166 @@ const Index = () => {
 
   const [isDownloading, setIsDownloading] = useState(false);
 
-  // Download PNG using html2canvas - same as preview
+  // Fixed download function with better consistency
   const downloadAsPNG = async () => {
     setIsDownloading(true);
     try {
       toast.info("Memproses laporan PNG...", {
-        description: "Sedang menggenerate file PNG dengan foto dan font yang lebih besar."
+        description: "Sedang menggenerate file PNG dengan kualitas tinggi."
       });
 
-      const element = document.getElementById('report-preview');
-      if (!element) {
+      // Get the preview element
+      const previewElement = document.getElementById('report-preview');
+      if (!previewElement) {
         throw new Error('Report preview element not found');
       }
 
-      // Create a temporary container with fixed A4 dimensions for download
-      const tempContainer = document.createElement('div');
-      tempContainer.style.position = 'absolute';
-      tempContainer.style.left = '-9999px';
-      tempContainer.style.top = '0';
-      tempContainer.style.width = '794px';
-      tempContainer.style.height = '1123px';
-      tempContainer.style.backgroundColor = '#ffffff';
-      tempContainer.style.fontFamily = 'Arial, sans-serif';
+      // Create a dedicated download container with exact A4 dimensions
+      const downloadContainer = document.createElement('div');
+      downloadContainer.style.cssText = `
+        position: fixed;
+        top: -10000px;
+        left: -10000px;
+        width: 794px;
+        height: 1123px;
+        background: white;
+        font-family: Arial, sans-serif;
+        overflow: hidden;
+        z-index: -1;
+      `;
+
+      // Clone the preview content
+      const clonedContent = previewElement.cloneNode(true) as HTMLElement;
       
-      // Clone the preview element
-      const clonedElement = element.cloneNode(true) as HTMLElement;
-      
-      // Reset any responsive scaling for download
-      clonedElement.style.width = '794px';
-      clonedElement.style.height = '1123px';
-      clonedElement.style.maxWidth = 'none';
-      clonedElement.style.transform = 'none';
-      clonedElement.style.transformOrigin = 'none';
-      
-      tempContainer.appendChild(clonedElement);
-      document.body.appendChild(tempContainer);
+      // Force exact styling for download
+      clonedContent.style.cssText = `
+        width: 794px !important;
+        height: 1123px !important;
+        max-width: none !important;
+        min-height: 1123px !important;
+        transform: none !important;
+        scale: 1 !important;
+        margin: 0 !important;
+        padding: 40px !important;
+        box-sizing: border-box !important;
+        background: white !important;
+        font-family: Arial, sans-serif !important;
+        overflow: hidden !important;
+      `;
+
+      // Fix all nested elements to prevent responsive scaling
+      const allElements = clonedContent.querySelectorAll('*');
+      allElements.forEach((el: Element) => {
+        const element = el as HTMLElement;
+        // Remove responsive classes and force fixed sizing
+        element.style.maxWidth = 'none';
+        element.style.transform = 'none';
+        element.style.scale = '1';
+      });
+
+      // Specifically fix table and image sizing
+      const tables = clonedContent.querySelectorAll('table');
+      tables.forEach((table: Element) => {
+        const tableEl = table as HTMLElement;
+        tableEl.style.width = '100%';
+        tableEl.style.tableLayout = 'fixed';
+      });
+
+      const images = clonedContent.querySelectorAll('img');
+      images.forEach((img: Element) => {
+        const imgEl = img as HTMLElement;
+        imgEl.style.maxWidth = '100%';
+        imgEl.style.height = 'auto';
+      });
+
+      downloadContainer.appendChild(clonedContent);
+      document.body.appendChild(downloadContainer);
 
       // Wait for images to load
-      const images = tempContainer.querySelectorAll('img');
-      await Promise.all(Array.from(images).map(img => {
+      const imageElements = downloadContainer.querySelectorAll('img');
+      await Promise.all(Array.from(imageElements).map(img => {
         if (img.complete) return Promise.resolve();
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
           img.onload = resolve;
-          img.onerror = reject;
-          // Set a timeout to avoid hanging
-          setTimeout(resolve, 3000);
+          img.onerror = resolve; // Continue even if image fails
+          setTimeout(resolve, 2000); // Timeout after 2 seconds
         });
       }));
 
-      // Generate canvas with high quality settings
-      const canvas = await html2canvas(tempContainer, {
-        scale: 2, // High resolution
+      // Small delay to ensure rendering is complete
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Generate canvas with optimal settings
+      const canvas = await html2canvas(downloadContainer, {
+        width: 794,
+        height: 1123,
+        scale: 2, // High DPI for quality
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
-        width: 794,
-        height: 1123,
         scrollX: 0,
         scrollY: 0,
         windowWidth: 794,
         windowHeight: 1123,
-        onclone: (clonedDoc) => {
-          // Ensure all styles are properly applied in the cloned document
-          const clonedContainer = clonedDoc.querySelector('[id="report-preview"]');
-          if (clonedContainer) {
-            // Force specific styles for download consistency
-            (clonedContainer as HTMLElement).style.width = '794px';
-            (clonedContainer as HTMLElement).style.height = '1123px';
-            (clonedContainer as HTMLElement).style.maxWidth = 'none';
-            (clonedContainer as HTMLElement).style.transform = 'none';
-          }
+        ignoreElements: (element) => {
+          // Ignore any elements that might cause issues
+          return element.classList?.contains('no-print') || false;
+        },
+        onclone: (clonedDoc, element) => {
+          // Additional styling fixes in cloned document
+          const style = clonedDoc.createElement('style');
+          style.textContent = `
+            * {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              color-adjust: exact !important;
+            }
+            body {
+              margin: 0 !important;
+              padding: 0 !important;
+              width: 794px !important;
+              height: 1123px !important;
+            }
+            #report-preview {
+              width: 794px !important;
+              height: 1123px !important;
+              max-width: none !important;
+              transform: none !important;
+              scale: 1 !important;
+            }
+          `;
+          clonedDoc.head.appendChild(style);
         }
       });
 
-      // Clean up temporary container
-      document.body.removeChild(tempContainer);
+      // Clean up
+      document.body.removeChild(downloadContainer);
 
       // Download the image
       const link = document.createElement('a');
       link.download = `laporan-${reportData.employee || 'collection'}-${new Date().toISOString().split('T')[0]}.png`;
       link.href = canvas.toDataURL('image/png', 1.0);
+      
+      // Trigger download
+      document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
 
       toast.success("Download PNG berhasil!", {
-        description: "Laporan dengan foto dan font yang lebih besar telah berhasil didownload."
+        description: "Laporan telah berhasil didownload dengan kualitas tinggi."
       });
     } catch (error) {
       console.error('Error generating PNG:', error);
       toast.error("Download PNG gagal!", {
-        description: "Terjadi kesalahan saat menggenerate laporan PNG."
+        description: "Terjadi kesalahan saat menggenerate laporan PNG. Silakan coba lagi."
       });
     } finally {
       setIsDownloading(false);
     }
   };
 
-  // Print function for browser native print
-  const printReport = () => {
+  // Alternative download method using print-to-PDF approach
+  const downloadViaPrint = () => {
     const printWindow = window.open('', '_blank');
     if (printWindow) {
       const reportElement = document.getElementById('report-preview');
@@ -162,22 +225,31 @@ const Index = () => {
                 }
                 body { 
                   margin: 0; 
+                  padding: 0;
                   font-family: Arial, sans-serif; 
                   -webkit-print-color-adjust: exact;
                   print-color-adjust: exact;
+                  color-adjust: exact;
                 }
-                .no-print { display: none !important; }
-                /* Ensure consistent styling for print */
-                #report-preview {
-                  width: 794px !important;
-                  height: 1123px !important;
-                  max-width: none !important;
-                  transform: none !important;
+                .report-container {
+                  width: 794px;
+                  height: 1123px;
+                  background: white;
+                  overflow: hidden;
+                }
+                table {
+                  border-collapse: collapse;
+                  width: 100%;
+                }
+                .no-print { 
+                  display: none !important; 
                 }
               </style>
             </head>
             <body>
-              ${reportElement.outerHTML}
+              <div class="report-container">
+                ${reportElement.innerHTML}
+              </div>
             </body>
           </html>
         `);
@@ -187,7 +259,7 @@ const Index = () => {
         setTimeout(() => {
           printWindow.print();
           printWindow.close();
-        }, 250);
+        }, 500);
       }
     }
   };
@@ -221,7 +293,7 @@ const Index = () => {
             </div>
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border border-slate-200">
               <CheckCircle2 className="w-4 h-4 text-purple-600" />
-              <span className="text-sm font-medium text-slate-700">Input Manual</span>
+              <span className="text-sm font-medium text-slate-700">Konsisten</span>
             </div>
           </div>
         </div>
@@ -293,7 +365,7 @@ const Index = () => {
                 </Button>
 
                 <Button 
-                  onClick={printReport}
+                  onClick={downloadViaPrint}
                   disabled={isDownloading}
                   className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg h-12 px-6 font-semibold transition-all duration-200"
                 >
