@@ -59,10 +59,10 @@ const ReportPreview = ({ reportData }: ReportPreviewProps) => {
                   {/* Main Content Header */}
                   <thead>
                     <tr className="bg-blue-600 text-white">
-                      <th className="border-r border-gray-400 p-2 sm:p-3 text-center font-semibold text-xs sm:text-sm">
+                      <th className="border-r border-gray-400 p-2 sm:p-3 text-center font-semibold text-sm sm:text-base lg:text-lg">
                         Jumlah Cash Pick Up (NOA)
                       </th>
-                      <th className="p-2 sm:p-3 text-center font-semibold text-xs sm:text-sm">
+                      <th className="p-2 sm:p-3 text-center font-semibold text-sm sm:text-base lg:text-lg">
                         Foto (Struk Terakhir)
                       </th>
                     </tr>
@@ -73,22 +73,22 @@ const ReportPreview = ({ reportData }: ReportPreviewProps) => {
                     {reportData.items.length > 0 ? (
                       reportData.items.map((item, index) => (
                         <tr key={item.id} className="border-b border-gray-300">
-                          <td className="border-r border-gray-300 p-3 sm:p-6 text-center bg-white">
-                            <div className="text-3xl sm:text-4xl lg:text-6xl font-bold text-blue-600 mb-1 sm:mb-2">
+                          <td className="border-r border-gray-300 p-4 sm:p-6 lg:p-8 text-center bg-white">
+                            <div className="text-5xl sm:text-6xl lg:text-8xl xl:text-9xl font-bold text-blue-600 mb-2 sm:mb-3">
                               {item.quantity || '-'}
                             </div>
                           </td>
-                          <td className="p-3 sm:p-6 text-center bg-white">
+                          <td className="p-4 sm:p-6 lg:p-8 text-center bg-white">
                             {item.image ? (
                               <div className="flex justify-center">
                                 <img
                                   src={item.image}
                                   alt={`Item ${index + 1}`}
-                                  className="max-w-full h-24 sm:h-32 lg:h-48 object-contain rounded-lg shadow-sm"
+                                  className="max-w-full h-40 sm:h-48 lg:h-64 xl:h-72 object-contain rounded-lg shadow-md border border-gray-200"
                                 />
                               </div>
                             ) : (
-                              <div className="w-full h-20 sm:h-24 lg:h-32 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs sm:text-sm shadow-inner">
+                              <div className="w-full h-32 sm:h-40 lg:h-48 xl:h-56 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-sm sm:text-base shadow-inner border border-gray-200">
                                 No Image
                               </div>
                             )}
@@ -97,12 +97,12 @@ const ReportPreview = ({ reportData }: ReportPreviewProps) => {
                       ))
                     ) : (
                       <tr className="border-b border-gray-300">
-                        <td className="border-r border-gray-300 p-3 sm:p-6 text-center bg-white">
-                          <div className="text-3xl sm:text-4xl lg:text-6xl font-bold text-blue-600 mb-1 sm:mb-2">-</div>
-                          <div className="text-xs sm:text-sm text-gray-600">No items</div>
+                        <td className="border-r border-gray-300 p-4 sm:p-6 lg:p-8 text-center bg-white">
+                          <div className="text-5xl sm:text-6xl lg:text-8xl xl:text-9xl font-bold text-blue-600 mb-2 sm:mb-3">-</div>
+                          <div className="text-sm sm:text-base text-gray-600">No items</div>
                         </td>
-                        <td className="p-3 sm:p-6 text-center bg-white">
-                          <div className="w-full h-20 sm:h-24 lg:h-32 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs sm:text-sm shadow-inner">
+                        <td className="p-4 sm:p-6 lg:p-8 text-center bg-white">
+                          <div className="w-full h-32 sm:h-40 lg:h-48 xl:h-56 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-sm sm:text-base shadow-inner border border-gray-200">
                             No Image
                           </div>
                         </td>

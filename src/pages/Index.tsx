@@ -84,7 +84,7 @@ const Index = () => {
     setIsDownloading(true);
     try {
       toast.info("Memproses laporan PNG...", {
-        description: "Sedang menggenerate file PNG dengan tabel yang terpadu."
+        description: "Sedang menggenerate file PNG dengan foto dan font yang lebih besar."
       });
 
       // Create canvas with A4 dimensions (794x1123 pixels at 96 DPI)
@@ -190,10 +190,10 @@ const Index = () => {
       ctx.fill();
       
       ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 14px Arial';
+      ctx.font = 'bold 16px Arial'; // Increased header font size
       ctx.textAlign = 'center';
-      ctx.fillText('Jumlah Cash Pick Up (NOA)', leftMargin + col1Width / 2, yPosition + 15);
-      ctx.fillText('Foto (Struk Terakhir)', leftMargin + col1Width + col2Width / 2, yPosition + 15);
+      ctx.fillText('Jumlah Cash Pick Up (NOA)', leftMargin + col1Width / 2, yPosition + 12);
+      ctx.fillText('Foto (Struk Terakhir)', leftMargin + col1Width + col2Width / 2, yPosition + 12);
       
       // Draw header borders with gray color
       ctx.strokeStyle = '#d1d5db'; // gray-300
@@ -210,10 +210,10 @@ const Index = () => {
       
       yPosition += 40;
 
-      // Table content
+      // Table content with larger row height for bigger images
       if (reportData.items.length === 0) {
-        // Empty state
-        const rowHeight = 120;
+        // Empty state with larger row
+        const rowHeight = 160; // Increased from 120
         
         // Draw row background
         ctx.fillStyle = '#ffffff';
@@ -225,31 +225,31 @@ const Index = () => {
         ctx.strokeRect(leftMargin, yPosition, tableWidth, rowHeight);
         ctx.strokeRect(leftMargin + col1Width, yPosition, 1, rowHeight); // Vertical separator
         
-        // Left column - quantity
+        // Left column - quantity with larger font
         ctx.fillStyle = '#2563eb'; // blue-600
-        ctx.font = 'bold 48px Arial';
+        ctx.font = 'bold 64px Arial'; // Increased from 48px
         ctx.textAlign = 'center';
-        ctx.fillText('0', leftMargin + col1Width / 2, yPosition + 30);
+        ctx.fillText('0', leftMargin + col1Width / 2, yPosition + 40);
         
         ctx.fillStyle = '#6b7280'; // gray-500
         ctx.font = '12px Arial';
-        ctx.fillText('No items', leftMargin + col1Width / 2, yPosition + 85);
+        ctx.fillText('No items', leftMargin + col1Width / 2, yPosition + 120);
         
-        // Right column - image placeholder with rounded corners
+        // Right column - larger image placeholder
         ctx.fillStyle = '#f3f4f6'; // gray-100
         ctx.beginPath();
-        ctx.roundRect(leftMargin + col1Width + 20, yPosition + 20, col2Width - 40, 80, 8);
+        ctx.roundRect(leftMargin + col1Width + 20, yPosition + 20, col2Width - 40, 120, 8); // Increased height
         ctx.fill();
         
         ctx.fillStyle = '#9ca3af'; // gray-400
         ctx.font = '12px Arial';
-        ctx.fillText('No Image', leftMargin + col1Width + col2Width / 2, yPosition + 55);
+        ctx.fillText('No Image', leftMargin + col1Width + col2Width / 2, yPosition + 75);
         
         yPosition += rowHeight;
       } else {
-        // Render items
+        // Render items with larger images
         for (const item of reportData.items) {
-          const rowHeight = 120;
+          const rowHeight = 160; // Increased from 120
           
           // Draw row background
           ctx.fillStyle = '#ffffff';
@@ -261,18 +261,18 @@ const Index = () => {
           ctx.strokeRect(leftMargin, yPosition, tableWidth, rowHeight);
           ctx.strokeRect(leftMargin + col1Width, yPosition, 1, rowHeight); // Vertical separator
           
-          // Left column - quantity only (no name)
+          // Left column - quantity with much larger font
           ctx.fillStyle = '#2563eb'; // blue-600
-          ctx.font = 'bold 48px Arial';
+          ctx.font = 'bold 64px Arial'; // Increased from 48px
           ctx.textAlign = 'center';
-          ctx.fillText(item.quantity || '-', leftMargin + col1Width / 2, yPosition + 40);
+          ctx.fillText(item.quantity || '-', leftMargin + col1Width / 2, yPosition + 50);
           
-          // Right column - image with rounded corners
+          // Right column - larger image area
           const imageArea = {
-            x: leftMargin + col1Width + 20,
-            y: yPosition + 20,
-            width: col2Width - 40,
-            height: 80
+            x: leftMargin + col1Width + 15, // Reduced margin for more space
+            y: yPosition + 15, // Reduced margin for more space
+            width: col2Width - 30, // Increased width
+            height: 130 // Increased height from 80
           };
           
           if (item.image) {
@@ -299,13 +299,20 @@ const Index = () => {
                 drawY = imageArea.y;
               }
               
-              // Draw image with rounded corners
+              // Draw image with rounded corners and border
               ctx.save();
               ctx.beginPath();
               ctx.roundRect(drawX, drawY, drawWidth, drawHeight, 8);
               ctx.clip();
               ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
               ctx.restore();
+              
+              // Add border around image
+              ctx.strokeStyle = '#d1d5db';
+              ctx.lineWidth = 1;
+              ctx.beginPath();
+              ctx.roundRect(drawX, drawY, drawWidth, drawHeight, 8);
+              ctx.stroke();
             } catch (error) {
               // Fallback if image fails to load
               ctx.fillStyle = '#f3f4f6'; // gray-100
@@ -319,7 +326,7 @@ const Index = () => {
               ctx.fillText('Image Error', imageArea.x + imageArea.width / 2, imageArea.y + imageArea.height / 2);
             }
           } else {
-            // No image placeholder with rounded corners
+            // No image placeholder with larger size
             ctx.fillStyle = '#f3f4f6'; // gray-100
             ctx.beginPath();
             ctx.roundRect(imageArea.x, imageArea.y, imageArea.width, imageArea.height, 8);
@@ -402,7 +409,7 @@ const Index = () => {
       link.click();
 
       toast.success("Download PNG berhasil!", {
-        description: "Laporan dengan tabel terpadu telah berhasil didownload."
+        description: "Laporan dengan foto dan font yang lebih besar telah berhasil didownload."
       });
     } catch (error) {
       console.error('Error generating PNG:', error);
@@ -531,7 +538,7 @@ const Index = () => {
                 <h2 className="text-3xl font-bold text-slate-900 mb-2">
                   Preview Laporan
                 </h2>
-                <p className="text-slate-600">Lihat hasil laporan dengan tabel yang terpadu dan modern</p>
+                <p className="text-slate-600">Lihat hasil laporan dengan foto dan font yang lebih besar</p>
               </div>
               
               {/* Download Options */}
@@ -575,7 +582,7 @@ const Index = () => {
                     <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
                     <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                   </div>
-                  <span className="text-sm font-medium text-slate-600">Preview Mode - Summary input manual</span>
+                  <span className="text-sm font-medium text-slate-600">Preview Mode - Foto dan font diperbesar</span>
                 </div>
               </div>
               <div className="p-2 sm:p-4 lg:p-6">
