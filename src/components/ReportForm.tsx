@@ -336,18 +336,17 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
               Pembukaan Tabungan (NOA)
             </Label>
             <Input
-              type="number"
+              type="text"
               value={reportData.summary.total}
               onChange={(e) => setReportData({
                 ...reportData,
                 summary: {
                   ...reportData.summary,
-                  total: parseInt(e.target.value) || 0
+                  total: e.target.value
                 }
               })}
               className="h-10 border-slate-300 focus:border-slate-500 transition-colors"
-              placeholder="0"
-              min="0"
+              placeholder="Masukkan jumlah"
             />
           </div>
           
@@ -357,18 +356,17 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
               Pembukaan Deposit (NOA)
             </Label>
             <Input
-              type="number"
+              type="text"
               value={reportData.summary.deposits}
               onChange={(e) => setReportData({
                 ...reportData,
                 summary: {
                   ...reportData.summary,
-                  deposits: parseInt(e.target.value) || 0
+                  deposits: e.target.value
                 }
               })}
               className="h-10 border-slate-300 focus:border-slate-500 transition-colors"
-              placeholder="0"
-              min="0"
+              placeholder="Masukkan jumlah"
             />
           </div>
           
@@ -378,18 +376,17 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
               Rekomendasi Kredit
             </Label>
             <Input
-              type="number"
+              type="text"
               value={reportData.summary.recommendations}
               onChange={(e) => setReportData({
                 ...reportData,
                 summary: {
                   ...reportData.summary,
-                  recommendations: parseInt(e.target.value) || 0
+                  recommendations: e.target.value
                 }
               })}
               className="h-10 border-slate-300 focus:border-slate-500 transition-colors"
-              placeholder="0"
-              min="0"
+              placeholder="Masukkan jumlah"
             />
           </div>
         </div>

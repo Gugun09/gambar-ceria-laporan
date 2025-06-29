@@ -115,7 +115,7 @@ const ReportPreview = ({ reportData }: ReportPreviewProps) => {
                         Pembukaan Tabungan (NOA)
                       </td>
                       <td className="p-3 sm:p-4 text-center font-bold text-lg sm:text-xl">
-                        {reportData.summary.total}
+                        {reportData.summary.total || '-'}
                       </td>
                     </tr>
                     <tr className="bg-blue-600 text-white border-t border-gray-400">
@@ -123,7 +123,7 @@ const ReportPreview = ({ reportData }: ReportPreviewProps) => {
                         Pembukaan Deposit (NOA)
                       </td>
                       <td className="p-3 sm:p-4 text-center font-bold text-lg sm:text-xl">
-                        {reportData.summary.deposits}
+                        {reportData.summary.deposits || '-'}
                       </td>
                     </tr>
                     <tr className="bg-blue-600 text-white border-t border-gray-400">
@@ -131,7 +131,7 @@ const ReportPreview = ({ reportData }: ReportPreviewProps) => {
                         Rekomendasi Kredit
                       </td>
                       <td className="p-3 sm:p-4 text-center font-bold text-lg sm:text-xl">
-                        {reportData.summary.recommendations}
+                        {reportData.summary.recommendations || '-'}
                       </td>
                     </tr>
                   </tbody>

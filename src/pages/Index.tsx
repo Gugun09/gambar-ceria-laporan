@@ -20,9 +20,9 @@ export interface ReportData {
     image?: string;
   }>;
   summary: {
-    total: number;
-    deposits: number;
-    recommendations: number;
+    total: string;
+    deposits: string;
+    recommendations: string;
   };
 }
 
@@ -40,9 +40,9 @@ const Index = () => {
     employee: '',
     items: [],
     summary: {
-      total: 0,
-      deposits: 0,
-      recommendations: 0
+      total: '',
+      deposits: '',
+      recommendations: ''
     }
   });
 
@@ -337,9 +337,9 @@ const Index = () => {
 
       // Summary Section - Integrated without header
       const summaryData = [
-        ['Pembukaan Tabungan (NOA)', reportData.summary.total.toString()],
-        ['Pembukaan Deposit (NOA)', reportData.summary.deposits.toString()],
-        ['Rekomendasi Kredit', reportData.summary.recommendations.toString()]
+        ['Pembukaan Tabungan (NOA)', reportData.summary.total || '-'],
+        ['Pembukaan Deposit (NOA)', reportData.summary.deposits || '-'],
+        ['Rekomendasi Kredit', reportData.summary.recommendations || '-']
       ];
       
       summaryData.forEach(([label, value], index) => {
@@ -575,7 +575,7 @@ const Index = () => {
                     <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
                     <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                   </div>
-                  <span className="text-sm font-medium text-slate-600">Preview Mode - Tanpa nama item, summary input manual</span>
+                  <span className="text-sm font-medium text-slate-600">Preview Mode - Summary input manual</span>
                 </div>
               </div>
               <div className="p-2 sm:p-4 lg:p-6">
