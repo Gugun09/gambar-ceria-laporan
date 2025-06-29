@@ -79,12 +79,12 @@ const Index = () => {
     return lines;
   };
 
-  // Download PNG with exact same format as preview
+  // Download PNG with unified table format
   const downloadAsPNG = async () => {
     setIsDownloading(true);
     try {
       toast.info("Memproses laporan PNG...", {
-        description: "Sedang menggenerate file PNG dengan format preview yang sama."
+        description: "Sedang menggenerate file PNG dengan tabel yang terpadu."
       });
 
       // Create canvas with A4 dimensions (794x1123 pixels at 96 DPI)
@@ -166,12 +166,15 @@ const Index = () => {
 
       yPosition += 30;
 
-      // Main Content Table
+      // Unified Table - Main Content + Summary
       const tableStartY = yPosition;
       const tableWidth = contentWidth;
-      const tableHeight = Math.max(300, reportData.items.length * 100 + 100);
       const col1Width = tableWidth / 2;
       const col2Width = tableWidth / 2;
+
+      // Draw table border
+      ctx.strokeStyle = '#d1d5db'; // gray-300
+      ctx.lineWidth = 1;
 
       // Table header
       ctx.fillStyle = '#2563eb'; // blue-600
@@ -182,6 +185,11 @@ const Index = () => {
       ctx.textAlign = 'center';
       ctx.fillText('Jumlah Cash Pick Up (NOA)', leftMargin + col1Width / 2, yPosition + 15);
       ctx.fillText('Foto (Struk Terakhir)', leftMargin + col1Width + col2Width / 2, yPosition + 15);
+      
+      // Draw header borders
+      ctx.strokeStyle = '#1e40af'; // blue-800
+      ctx.strokeRect(leftMargin, yPosition, tableWidth, 40);
+      ctx.strokeRect(leftMargin + col1Width, yPosition, 1, 40); // Vertical separator
       
       yPosition += 40;
 
@@ -299,9 +307,23 @@ const Index = () => {
         }
       }
 
-      yPosition += 30;
+      // Summary Section - Integrated into the same table
+      // Summary header
+      ctx.fillStyle = '#1d4ed8'; // blue-700
+      ctx.fillRect(leftMargin, yPosition, tableWidth, 35);
+      
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 16px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('RINGKASAN LAPORAN', leftMargin + tableWidth / 2, yPosition + 12);
+      
+      // Draw summary header border
+      ctx.strokeStyle = '#d1d5db'; // gray-300
+      ctx.strokeRect(leftMargin, yPosition, tableWidth, 35);
+      
+      yPosition += 35;
 
-      // Summary Table
+      // Summary rows
       const summaryData = [
         ['Pembukaan Tabungan (NOA)', reportData.summary.total.toString()],
         ['Pembukaan Deposit (NOA)', reportData.summary.deposits.toString()],
@@ -325,8 +347,17 @@ const Index = () => {
         ctx.font = 'bold 18px Arial';
         ctx.fillText(value, leftMargin + tableWidth * 0.8, yPosition + 12);
         
-        yPosition += rowHeight + 2;
+        // Draw summary row border
+        ctx.strokeStyle = '#1e40af'; // blue-800
+        ctx.strokeRect(leftMargin, yPosition, tableWidth, rowHeight);
+        ctx.strokeRect(leftMargin + tableWidth * 0.65, yPosition, 1, rowHeight); // Vertical separator
+        
+        yPosition += rowHeight;
       });
+
+      // Draw final table border
+      ctx.strokeStyle = '#d1d5db'; // gray-300
+      ctx.strokeRect(leftMargin, tableStartY, tableWidth, yPosition - tableStartY);
 
       // Footer
       yPosition = canvas.height - 50;
@@ -342,7 +373,7 @@ const Index = () => {
       link.click();
 
       toast.success("Download PNG berhasil!", {
-        description: "Laporan telah berhasil didownload dengan format yang sama seperti preview."
+        description: "Laporan dengan tabel terpadu telah berhasil didownload."
       });
     } catch (error) {
       console.error('Error generating PNG:', error);
@@ -424,7 +455,7 @@ const Index = () => {
             </div>
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border border-slate-200">
               <CheckCircle2 className="w-4 h-4 text-purple-600" />
-              <span className="text-sm font-medium text-slate-700">Format Konsisten</span>
+              <span className="text-sm font-medium text-slate-700">Tabel Terpadu</span>
             </div>
           </div>
         </div>
@@ -471,7 +502,7 @@ const Index = () => {
                 <h2 className="text-3xl font-bold text-slate-900 mb-2">
                   Preview Laporan
                 </h2>
-                <p className="text-slate-600">Lihat hasil laporan sebelum didownload</p>
+                <p className="text-slate-600">Lihat hasil laporan dengan tabel yang terpadu</p>
               </div>
               
               {/* Download Options */}
@@ -515,7 +546,7 @@ const Index = () => {
                     <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
                     <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                   </div>
-                  <span className="text-sm font-medium text-slate-600">Preview Mode - Format yang sama saat download</span>
+                  <span className="text-sm font-medium text-slate-600">Preview Mode - Tabel terpadu untuk tampilan yang lebih rapi</span>
                 </div>
               </div>
               <div className="p-2 sm:p-4 lg:p-6">

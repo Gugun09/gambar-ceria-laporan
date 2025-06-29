@@ -52,9 +52,10 @@ const ReportPreview = ({ reportData }: ReportPreviewProps) => {
               </div>
             </div>
 
-            {/* Main Content Table */}
+            {/* Unified Table - Main Content + Summary */}
             <div className="mb-6 sm:mb-8 overflow-x-auto">
-              <table className="w-full border-collapse min-w-full">
+              <table className="w-full border-collapse min-w-full border border-gray-300">
+                {/* Main Content Header */}
                 <thead>
                   <tr className="bg-blue-600 text-white">
                     <th className="border border-blue-800 p-2 sm:p-3 text-center font-semibold text-xs sm:text-sm">
@@ -65,77 +66,88 @@ const ReportPreview = ({ reportData }: ReportPreviewProps) => {
                     </th>
                   </tr>
                 </thead>
+                
+                {/* Main Content Body */}
                 <tbody>
-                  {reportData.items.map((item, index) => (
-                    <tr key={item.id} className="border-b">
-                      <td className="border border-gray-300 p-3 sm:p-6 text-center">
-                        <div className="text-3xl sm:text-4xl lg:text-6xl font-bold text-blue-600 mb-1 sm:mb-2">
-                          {item.quantity}
-                        </div>
-                        <div className="text-xs sm:text-sm text-gray-600 break-words">{item.name}</div>
-                      </td>
-                      <td className="border border-gray-300 p-3 sm:p-6 text-center">
-                        {item.image ? (
-                          <div className="flex justify-center">
-                            <img
-                              src={item.image}
-                              alt={item.name}
-                              className="max-w-full h-24 sm:h-32 lg:h-48 object-contain rounded"
-                            />
+                  {reportData.items.length > 0 ? (
+                    reportData.items.map((item, index) => (
+                      <tr key={item.id} className="border-b">
+                        <td className="border border-gray-300 p-3 sm:p-6 text-center bg-white">
+                          <div className="text-3xl sm:text-4xl lg:text-6xl font-bold text-blue-600 mb-1 sm:mb-2">
+                            {item.quantity}
                           </div>
-                        ) : (
-                          <div className="w-full h-20 sm:h-24 lg:h-32 bg-gray-100 rounded flex items-center justify-center text-gray-400 text-xs sm:text-sm">
-                            No Image
-                          </div>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                  
-                  {/* Empty rows to maintain structure */}
-                  {reportData.items.length === 0 && (
+                          <div className="text-xs sm:text-sm text-gray-600 break-words">{item.name}</div>
+                        </td>
+                        <td className="border border-gray-300 p-3 sm:p-6 text-center bg-white">
+                          {item.image ? (
+                            <div className="flex justify-center">
+                              <img
+                                src={item.image}
+                                alt={item.name}
+                                className="max-w-full h-24 sm:h-32 lg:h-48 object-contain rounded"
+                              />
+                            </div>
+                          ) : (
+                            <div className="w-full h-20 sm:h-24 lg:h-32 bg-gray-100 rounded flex items-center justify-center text-gray-400 text-xs sm:text-sm">
+                              No Image
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
                     <tr>
-                      <td className="border border-gray-300 p-3 sm:p-6 text-center">
+                      <td className="border border-gray-300 p-3 sm:p-6 text-center bg-white">
                         <div className="text-3xl sm:text-4xl lg:text-6xl font-bold text-blue-600 mb-1 sm:mb-2">0</div>
                         <div className="text-xs sm:text-sm text-gray-600">No items</div>
                       </td>
-                      <td className="border border-gray-300 p-3 sm:p-6 text-center">
+                      <td className="border border-gray-300 p-3 sm:p-6 text-center bg-white">
                         <div className="w-full h-20 sm:h-24 lg:h-32 bg-gray-100 rounded flex items-center justify-center text-gray-400 text-xs sm:text-sm">
                           No Image
                         </div>
                       </td>
                     </tr>
                   )}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Summary Table */}
-            <div className="mt-6 sm:mt-8 overflow-x-auto">
-              <table className="w-full border-collapse">
-                <tbody>
-                  <tr className="bg-blue-600 text-white">
-                    <td className="border border-blue-800 p-3 sm:p-4 font-semibold text-center text-xs sm:text-sm lg:text-base">
-                      Pembukaan Tabungan (NOA)
-                    </td>
-                    <td className="border border-blue-800 p-3 sm:p-4 text-center font-bold text-lg sm:text-xl">
-                      {reportData.summary.total}
-                    </td>
-                  </tr>
-                  <tr className="bg-blue-600 text-white">
-                    <td className="border border-blue-800 p-3 sm:p-4 font-semibold text-center text-xs sm:text-sm lg:text-base">
-                      Pembukaan Deposit (NOA)
-                    </td>
-                    <td className="border border-blue-800 p-3 sm:p-4 text-center font-bold text-lg sm:text-xl">
-                      {reportData.summary.deposits}
-                    </td>
-                  </tr>
-                  <tr className="bg-blue-600 text-white">
-                    <td className="border border-blue-800 p-3 sm:p-4 font-semibold text-center text-xs sm:text-sm lg:text-base">
-                      Rekomendasi Kredit
-                    </td>
-                    <td className="border border-blue-800 p-3 sm:p-4 text-center font-bold text-lg sm:text-xl">
-                      {reportData.summary.recommendations}
+                  
+                  {/* Summary Section - Integrated into the same table */}
+                  <tr>
+                    <td colSpan={2} className="border border-gray-300 p-0">
+                      {/* Summary Header */}
+                      <div className="bg-blue-700 text-white p-2 sm:p-3 text-center">
+                        <h3 className="font-bold text-sm sm:text-base">RINGKASAN LAPORAN</h3>
+                      </div>
+                      
+                      {/* Summary Content */}
+                      <div className="bg-white">
+                        <table className="w-full">
+                          <tbody>
+                            <tr className="bg-blue-600 text-white">
+                              <td className="border-r border-blue-800 p-3 sm:p-4 font-semibold text-left text-xs sm:text-sm lg:text-base w-2/3">
+                                Pembukaan Tabungan (NOA)
+                              </td>
+                              <td className="p-3 sm:p-4 text-center font-bold text-lg sm:text-xl w-1/3">
+                                {reportData.summary.total}
+                              </td>
+                            </tr>
+                            <tr className="bg-blue-600 text-white">
+                              <td className="border-r border-blue-800 p-3 sm:p-4 font-semibold text-left text-xs sm:text-sm lg:text-base">
+                                Pembukaan Deposit (NOA)
+                              </td>
+                              <td className="p-3 sm:p-4 text-center font-bold text-lg sm:text-xl">
+                                {reportData.summary.deposits}
+                              </td>
+                            </tr>
+                            <tr className="bg-blue-600 text-white">
+                              <td className="border-r border-blue-800 p-3 sm:p-4 font-semibold text-left text-xs sm:text-sm lg:text-base">
+                                Rekomendasi Kredit
+                              </td>
+                              <td className="p-3 sm:p-4 text-center font-bold text-lg sm:text-xl">
+                                {reportData.summary.recommendations}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
                     </td>
                   </tr>
                 </tbody>
