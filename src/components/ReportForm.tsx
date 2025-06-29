@@ -111,12 +111,12 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
     <div className="space-y-8">
       {/* Basic Information Section */}
       <div className="space-y-6">
-        <div className="flex items-center gap-3 pb-4 border-b border-gradient-to-r from-blue-200 to-indigo-200">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+        <div className="flex items-center gap-3 pb-4 border-b border-slate-200">
+          <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center shadow-sm">
             <FileText className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-slate-800">Informasi Dasar</h3>
+            <h3 className="text-xl font-bold text-slate-900">Informasi Dasar</h3>
             <p className="text-sm text-slate-600">Data utama laporan</p>
           </div>
         </div>
@@ -124,49 +124,49 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="lg:col-span-2">
             <Label htmlFor="title" className="text-slate-700 font-semibold flex items-center gap-2 mb-2">
-              <FileText className="w-4 h-4 text-blue-500" />
+              <FileText className="w-4 h-4 text-slate-600" />
               Judul Laporan
             </Label>
             <Input
               id="title"
               value={reportData.title}
               onChange={(e) => updateField('title', e.target.value)}
-              className="h-12 border-2 border-slate-200 focus:border-blue-500 rounded-xl transition-all duration-300 bg-white/80 backdrop-blur-sm"
+              className="h-11 border-slate-300 focus:border-slate-500 transition-colors"
               placeholder="Masukkan judul laporan"
             />
           </div>
           
           <div>
             <Label htmlFor="company" className="text-slate-700 font-semibold flex items-center gap-2 mb-2">
-              <Building className="w-4 h-4 text-blue-500" />
+              <Building className="w-4 h-4 text-slate-600" />
               Nama Perusahaan
             </Label>
             <Input
               id="company"
               value={reportData.company}
               onChange={(e) => updateField('company', e.target.value)}
-              className="h-12 border-2 border-slate-200 focus:border-blue-500 rounded-xl transition-all duration-300 bg-white/80 backdrop-blur-sm"
+              className="h-11 border-slate-300 focus:border-slate-500 transition-colors"
               placeholder="Nama perusahaan"
             />
           </div>
 
           <div>
             <Label htmlFor="address" className="text-slate-700 font-semibold flex items-center gap-2 mb-2">
-              <MapPin className="w-4 h-4 text-blue-500" />
+              <MapPin className="w-4 h-4 text-slate-600" />
               Alamat
             </Label>
             <Input
               id="address"
               value={reportData.address}
               onChange={(e) => updateField('address', e.target.value)}
-              className="h-12 border-2 border-slate-200 focus:border-blue-500 rounded-xl transition-all duration-300 bg-white/80 backdrop-blur-sm"
+              className="h-11 border-slate-300 focus:border-slate-500 transition-colors"
               placeholder="Alamat perusahaan"
             />
           </div>
           
           <div>
             <Label className="text-slate-700 font-semibold flex items-center gap-2 mb-2">
-              <CalendarIcon className="w-4 h-4 text-blue-500" />
+              <CalendarIcon className="w-4 h-4 text-slate-600" />
               Periode
             </Label>
             <Popover>
@@ -174,17 +174,17 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
                 <Button
                   variant="outline"
                   className={cn(
-                    "w-full justify-start text-left font-normal h-12 border-2 border-slate-200 focus:border-blue-500 rounded-xl transition-all duration-300 bg-white/80 backdrop-blur-sm hover:bg-white",
+                    "w-full justify-start text-left font-normal h-11 border-slate-300 focus:border-slate-500 transition-colors",
                     !selectedDate && "text-muted-foreground"
                   )}
                 >
-                  <CalendarIcon className="mr-3 h-4 w-4 text-blue-500" />
+                  <CalendarIcon className="mr-3 h-4 w-4 text-slate-600" />
                   <span className="truncate">
                     {selectedDate ? format(selectedDate, "PPP") : "Pilih tanggal"}
                   </span>
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0 bg-white/95 backdrop-blur-sm border-2 border-white/20 rounded-2xl shadow-2xl" align="start">
+              <PopoverContent className="w-auto p-0 bg-white border-slate-200 shadow-lg" align="start">
                 <Calendar
                   mode="single"
                   selected={selectedDate}
@@ -198,14 +198,14 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
           
           <div>
             <Label htmlFor="employee" className="text-slate-700 font-semibold flex items-center gap-2 mb-2">
-              <User className="w-4 h-4 text-blue-500" />
+              <User className="w-4 h-4 text-slate-600" />
               Nama Karyawan
             </Label>
             <Input
               id="employee"
               value={reportData.employee}
               onChange={(e) => updateField('employee', e.target.value)}
-              className="h-12 border-2 border-slate-200 focus:border-blue-500 rounded-xl transition-all duration-300 bg-white/80 backdrop-blur-sm"
+              className="h-11 border-slate-300 focus:border-slate-500 transition-colors"
               placeholder="Nama karyawan"
             />
           </div>
@@ -214,20 +214,20 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
 
       {/* Items Section */}
       <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 pb-4 border-b border-gradient-to-r from-blue-200 to-indigo-200">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 pb-4 border-b border-slate-200">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
+            <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center shadow-sm">
               <Hash className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-slate-800">Item Collection</h3>
+              <h3 className="text-xl font-bold text-slate-900">Item Collection</h3>
               <p className="text-sm text-slate-600">{reportData.items.length} item ditambahkan</p>
             </div>
           </div>
           
           <Button 
             onClick={addItem} 
-            className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-lg rounded-xl h-12 px-6 font-semibold transition-all duration-300 transform hover:scale-105"
+            className="bg-slate-900 hover:bg-slate-800 text-white shadow-sm h-11 px-6 font-semibold transition-colors"
           >
             <Plus className="w-4 h-4 mr-2" />
             Tambah Item
@@ -236,8 +236,8 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
 
         <div className="space-y-4">
           {reportData.items.length === 0 && (
-            <Card className="p-8 text-center bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-dashed border-slate-300 rounded-2xl">
-              <div className="w-16 h-16 bg-gradient-to-br from-slate-400 to-slate-500 rounded-2xl flex items-center justify-center mx-auto mb-4 opacity-50">
+            <Card className="p-8 text-center bg-slate-50 border-2 border-dashed border-slate-300">
+              <div className="w-16 h-16 bg-slate-400 rounded-2xl flex items-center justify-center mx-auto mb-4 opacity-50">
                 <Hash className="w-8 h-8 text-white" />
               </div>
               <h4 className="text-lg font-semibold text-slate-600 mb-2">Belum ada item</h4>
@@ -246,11 +246,11 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
           )}
           
           {reportData.items.map((item, index) => (
-            <Card key={item.id} className="p-6 bg-white/80 backdrop-blur-sm border-2 border-white/20 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <Card key={item.id} className="p-6 bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                    <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white font-bold text-sm">
                       {index + 1}
                     </div>
                     <h4 className="font-semibold text-slate-800">Item #{index + 1}</h4>
@@ -259,7 +259,7 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
                     onClick={() => removeItem(item.id)}
                     variant="destructive"
                     size="sm"
-                    className="h-9 px-3 rounded-lg bg-red-500 hover:bg-red-600 transition-all duration-300"
+                    className="h-9 px-3 bg-red-600 hover:bg-red-700 transition-colors"
                   >
                     <Trash2 className="w-4 h-4 mr-2" />
                     <span className="hidden sm:inline">Hapus</span>
@@ -269,27 +269,27 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <Label className="text-slate-700 font-semibold flex items-center gap-2 mb-2">
-                      <FileText className="w-4 h-4 text-blue-500" />
+                      <FileText className="w-4 h-4 text-slate-600" />
                       Nama Item
                     </Label>
                     <Input
                       value={item.name}
                       onChange={(e) => updateItem(item.id, 'name', e.target.value)}
                       placeholder="Contoh: Whiskas Cat Food"
-                      className="h-11 border-2 border-slate-200 focus:border-blue-500 rounded-xl transition-all duration-300 bg-white/80 backdrop-blur-sm"
+                      className="h-10 border-slate-300 focus:border-slate-500 transition-colors"
                     />
                   </div>
                   
                   <div>
                     <Label className="text-slate-700 font-semibold flex items-center gap-2 mb-2">
-                      <Hash className="w-4 h-4 text-blue-500" />
+                      <Hash className="w-4 h-4 text-slate-600" />
                       Jumlah
                     </Label>
                     <Input
                       type="number"
                       value={item.quantity}
                       onChange={(e) => updateItem(item.id, 'quantity', parseInt(e.target.value) || 0)}
-                      className="h-11 border-2 border-slate-200 focus:border-blue-500 rounded-xl transition-all duration-300 bg-white/80 backdrop-blur-sm"
+                      className="h-10 border-slate-300 focus:border-slate-500 transition-colors"
                       placeholder="0"
                       min="0"
                     />
@@ -298,7 +298,7 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
                 
                 <div>
                   <Label className="text-slate-700 font-semibold flex items-center gap-2 mb-2">
-                    <Camera className="w-4 h-4 text-blue-500" />
+                    <Camera className="w-4 h-4 text-slate-600" />
                     Upload Gambar
                   </Label>
                   <div>
@@ -313,7 +313,7 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
                       type="button"
                       variant="outline"
                       onClick={() => document.getElementById(`image-${item.id}`)?.click()}
-                      className="w-full h-11 border-2 border-dashed border-slate-300 hover:border-blue-500 rounded-xl transition-all duration-300 bg-white/80 backdrop-blur-sm hover:bg-blue-50"
+                      className="w-full h-10 border-2 border-dashed border-slate-300 hover:border-slate-400 transition-colors"
                     >
                       <Upload className="w-4 h-4 mr-2" />
                       {item.image ? 'Ganti Gambar' : 'Pilih Gambar'}
@@ -327,13 +327,13 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
                       <img
                         src={item.image}
                         alt={item.name}
-                        className="w-24 h-24 object-cover rounded-xl border-2 border-white shadow-lg group-hover:shadow-xl transition-all duration-300"
+                        className="w-24 h-24 object-cover rounded-lg border border-slate-200 shadow-sm"
                       />
                       <Button
                         onClick={() => updateItem(item.id, 'image', '')}
                         variant="destructive"
                         size="sm"
-                        className="absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full bg-red-500 hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-all duration-300"
+                        className="absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full bg-red-600 hover:bg-red-700 opacity-0 group-hover:opacity-100 transition-opacity"
                       >
                         ×
                       </Button>
@@ -347,13 +347,13 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
       </div>
 
       {/* Summary Section */}
-      <Card className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl shadow-lg">
-        <div className="flex items-center gap-3 mb-6 pb-4 border-b border-blue-200">
-          <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
+      <Card className="p-6 bg-slate-50 border border-slate-200">
+        <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-200">
+          <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center shadow-sm">
             <Hash className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-slate-800">Summary</h3>
+            <h3 className="text-xl font-bold text-slate-900">Summary</h3>
             <p className="text-sm text-slate-600">Ringkasan data laporan</p>
           </div>
         </div>
@@ -361,7 +361,7 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
             <Label className="text-slate-700 font-semibold flex items-center gap-2 mb-2">
-              <Hash className="w-4 h-4 text-green-500" />
+              <Hash className="w-4 h-4 text-slate-600" />
               Pembukaan Tabungan (NOA)
             </Label>
             <Input
@@ -374,7 +374,7 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
                   deposits: parseInt(e.target.value) || 0
                 }
               })}
-              className="h-11 border-2 border-slate-200 focus:border-green-500 rounded-xl transition-all duration-300 bg-white/80 backdrop-blur-sm"
+              className="h-10 border-slate-300 focus:border-slate-500 transition-colors"
               placeholder="0"
               min="0"
             />
@@ -382,7 +382,7 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
           
           <div>
             <Label className="text-slate-700 font-semibold flex items-center gap-2 mb-2">
-              <Hash className="w-4 h-4 text-blue-500" />
+              <Hash className="w-4 h-4 text-slate-600" />
               Pembukaan Deposit (NOA)
             </Label>
             <Input
@@ -395,7 +395,7 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
                   deposits: parseInt(e.target.value) || 0
                 }
               })}
-              className="h-11 border-2 border-slate-200 focus:border-blue-500 rounded-xl transition-all duration-300 bg-white/80 backdrop-blur-sm"
+              className="h-10 border-slate-300 focus:border-slate-500 transition-colors"
               placeholder="0"
               min="0"
             />
@@ -403,7 +403,7 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
           
           <div className="sm:col-span-2 lg:col-span-1">
             <Label className="text-slate-700 font-semibold flex items-center gap-2 mb-2">
-              <Hash className="w-4 h-4 text-purple-500" />
+              <Hash className="w-4 h-4 text-slate-600" />
               Rekomendasi Kredit
             </Label>
             <Input
@@ -416,7 +416,7 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
                   recommendations: parseInt(e.target.value) || 0
                 }
               })}
-              className="h-11 border-2 border-slate-200 focus:border-purple-500 rounded-xl transition-all duration-300 bg-white/80 backdrop-blur-sm"
+              className="h-10 border-slate-300 focus:border-slate-500 transition-colors"
               placeholder="0"
               min="0"
             />
