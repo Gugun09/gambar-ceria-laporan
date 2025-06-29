@@ -4,9 +4,8 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ReportForm from '@/components/ReportForm';
 import ReportPreview from '@/components/ReportPreview';
-import { Download, FileText, CheckCircle2, Zap, Shield, FileImage, File as FilePdf } from 'lucide-react';
+import { Download, FileText, CheckCircle2, Zap, Shield, FileImage } from 'lucide-react';
 import { toast } from "@/components/ui/sonner";
-import jsPDF from 'jspdf';
 
 export interface ReportData {
   title: string;
@@ -49,110 +48,46 @@ const Index = () => {
 
   const [isDownloading, setIsDownloading] = useState(false);
 
-  // Method 1: Generate PDF using jsPDF
-  const downloadAsPDF = async () => {
-    setIsDownloading(true);
-    try {
-      toast.info("Memproses laporan PDF...", {
-        description: "Sedang menggenerate file PDF, mohon tunggu sebentar."
-      });
-
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      
-      // Set font
-      pdf.setFont('helvetica');
-      
-      // Header
-      pdf.setFontSize(16);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text(reportData.title, pageWidth / 2, 30, { align: 'center' });
-      
-      pdf.setFontSize(12);
-      pdf.setFont('helvetica', 'normal');
-      pdf.text(reportData.company, pageWidth / 2, 40, { align: 'center' });
-      pdf.text(reportData.address, pageWidth / 2, 50, { align: 'center' });
-      
-      // Line separator
-      pdf.setLineWidth(0.5);
-      pdf.line(20, 60, pageWidth - 20, 60);
-      
-      // Report info
-      pdf.setFontSize(10);
-      pdf.text(`Periode: ${reportData.period}`, 20, 75);
-      pdf.text(`Karyawan: ${reportData.employee}`, 20, 85);
-      
-      // Table header
-      let yPosition = 100;
-      pdf.setFontSize(12);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('No.', 20, yPosition);
-      pdf.text('Nama Item', 40, yPosition);
-      pdf.text('Jumlah', 120, yPosition);
-      pdf.text('Keterangan', 150, yPosition);
-      
-      // Table content
-      pdf.setFont('helvetica', 'normal');
-      pdf.setFontSize(10);
-      yPosition += 10;
-      
-      reportData.items.forEach((item, index) => {
-        if (yPosition > pageHeight - 30) {
-          pdf.addPage();
-          yPosition = 30;
-        }
-        
-        pdf.text((index + 1).toString(), 20, yPosition);
-        pdf.text(item.name || 'N/A', 40, yPosition);
-        pdf.text(item.quantity.toString(), 120, yPosition);
-        pdf.text(item.image ? 'Ada gambar' : 'Tidak ada gambar', 150, yPosition);
-        yPosition += 10;
-      });
-      
-      // Summary
-      yPosition += 20;
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('SUMMARY:', 20, yPosition);
-      yPosition += 10;
-      
-      pdf.setFont('helvetica', 'normal');
-      pdf.text(`Total Items: ${reportData.summary.total}`, 20, yPosition);
-      yPosition += 8;
-      pdf.text(`Pembukaan Tabungan: ${reportData.summary.deposits}`, 20, yPosition);
-      yPosition += 8;
-      pdf.text(`Rekomendasi Kredit: ${reportData.summary.recommendations}`, 20, yPosition);
-      
-      // Footer
-      pdf.setFontSize(8);
-      pdf.text(`Laporan dibuat pada: ${new Date().toLocaleString('id-ID')}`, 20, pageHeight - 20);
-      
-      // Save PDF
-      const fileName = `laporan-${reportData.employee || 'collection'}-${new Date().toISOString().split('T')[0]}.pdf`;
-      pdf.save(fileName);
-
-      toast.success("Download PDF berhasil!", {
-        description: "Laporan telah berhasil didownload dalam format PDF."
-      });
-    } catch (error) {
-      console.error('Error generating PDF:', error);
-      toast.error("Download PDF gagal!", {
-        description: "Terjadi kesalahan saat menggenerate laporan PDF."
-      });
-    } finally {
-      setIsDownloading(false);
-    }
+  // Helper function to load image and return as canvas-drawable format
+  const loadImage = (src: string): Promise<HTMLImageElement> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = src;
+    });
   };
 
-  // Method 2: Generate PNG using Canvas API (without html2canvas)
+  // Helper function to wrap text
+  const wrapText = (ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] => {
+    const words = text.split(' ');
+    const lines: string[] = [];
+    let currentLine = words[0];
+
+    for (let i = 1; i < words.length; i++) {
+      const word = words[i];
+      const width = ctx.measureText(currentLine + ' ' + word).width;
+      if (width < maxWidth) {
+        currentLine += ' ' + word;
+      } else {
+        lines.push(currentLine);
+        currentLine = word;
+      }
+    }
+    lines.push(currentLine);
+    return lines;
+  };
+
+  // Download PNG with exact same format as preview
   const downloadAsPNG = async () => {
     setIsDownloading(true);
     try {
       toast.info("Memproses laporan PNG...", {
-        description: "Sedang menggenerate file PNG, mohon tunggu sebentar."
+        description: "Sedang menggenerate file PNG dengan format preview yang sama."
       });
 
-      // Create canvas
+      // Create canvas with A4 dimensions (794x1123 pixels at 96 DPI)
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       
@@ -160,7 +95,6 @@ const Index = () => {
         throw new Error('Canvas context not available');
       }
 
-      // Set A4 dimensions (794x1123 pixels at 96 DPI)
       canvas.width = 794;
       canvas.height = 1123;
       
@@ -168,95 +102,206 @@ const Index = () => {
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      // Set text properties
+      // Set default text properties
       ctx.fillStyle = '#000000';
+      ctx.textBaseline = 'top';
+      
+      let yPosition = 40;
+      const leftMargin = 40;
+      const rightMargin = canvas.width - 40;
+      const contentWidth = rightMargin - leftMargin;
+
+      // Header Section
       ctx.textAlign = 'center';
-      
-      // Header
       ctx.font = 'bold 24px Arial';
-      ctx.fillText(reportData.title, canvas.width / 2, 60);
-      
+      ctx.fillStyle = '#1e3a8a'; // blue-900
+      ctx.fillText(reportData.title, canvas.width / 2, yPosition);
+      yPosition += 35;
+
       ctx.font = '16px Arial';
-      ctx.fillText(reportData.company, canvas.width / 2, 90);
-      ctx.fillText(reportData.address, canvas.width / 2, 115);
-      
-      // Line separator
-      ctx.strokeStyle = '#2563eb';
-      ctx.lineWidth = 3;
+      ctx.fillStyle = '#1d4ed8'; // blue-700
+      ctx.fillText(reportData.address, canvas.width / 2, yPosition);
+      yPosition += 25;
+      ctx.fillText(reportData.company, canvas.width / 2, yPosition);
+      yPosition += 35;
+
+      // Header border line
+      ctx.strokeStyle = '#2563eb'; // blue-600
+      ctx.lineWidth = 4;
       ctx.beginPath();
-      ctx.moveTo(50, 140);
-      ctx.lineTo(canvas.width - 50, 140);
+      ctx.moveTo(leftMargin, yPosition);
+      ctx.lineTo(rightMargin, yPosition);
       ctx.stroke();
-      
-      // Report info
+      yPosition += 25;
+
+      // Report Info Section
       ctx.textAlign = 'left';
-      ctx.font = '14px Arial';
-      ctx.fillText(`Periode: ${reportData.period}`, 50, 170);
-      ctx.fillText(`Karyawan: ${reportData.employee}`, 50, 195);
+      ctx.font = 'bold 14px Arial';
+      ctx.fillStyle = '#1e3a8a'; // blue-900
+      ctx.fillText('Periode :', leftMargin, yPosition);
+      yPosition += 20;
       
+      ctx.font = '14px Arial';
+      ctx.fillStyle = '#000000';
+      const periodLines = wrapText(ctx, reportData.period, contentWidth / 2 - 20);
+      periodLines.forEach(line => {
+        ctx.fillText(line, leftMargin, yPosition);
+        yPosition += 18;
+      });
+
+      // Employee info (right side)
+      const employeeY = yPosition - (periodLines.length * 18) - 20;
+      ctx.font = 'bold 14px Arial';
+      ctx.fillStyle = '#1e3a8a'; // blue-900
+      ctx.fillText('Karyawan :', canvas.width / 2 + 20, employeeY);
+      
+      ctx.font = '14px Arial';
+      ctx.fillStyle = '#000000';
+      const employeeLines = wrapText(ctx, reportData.employee || 'N/A', contentWidth / 2 - 20);
+      let empY = employeeY + 20;
+      employeeLines.forEach(line => {
+        ctx.fillText(line, canvas.width / 2 + 20, empY);
+        empY += 18;
+      });
+
+      yPosition += 30;
+
+      // Main Content Table
+      const tableStartY = yPosition;
+      const tableWidth = contentWidth;
+      const tableHeight = Math.max(300, reportData.items.length * 100 + 100);
+      const col1Width = tableWidth / 2;
+      const col2Width = tableWidth / 2;
+
       // Table header
-      let yPos = 240;
-      ctx.fillStyle = '#2563eb';
-      ctx.fillRect(50, yPos - 20, canvas.width - 100, 30);
+      ctx.fillStyle = '#2563eb'; // blue-600
+      ctx.fillRect(leftMargin, yPosition, tableWidth, 40);
       
       ctx.fillStyle = '#ffffff';
       ctx.font = 'bold 14px Arial';
       ctx.textAlign = 'center';
-      ctx.fillText('Jumlah Cash Pick Up (NOA)', 200, yPos - 5);
-      ctx.fillText('Foto (Struk Terakhir)', 550, yPos - 5);
+      ctx.fillText('Jumlah Cash Pick Up (NOA)', leftMargin + col1Width / 2, yPosition + 15);
+      ctx.fillText('Foto (Struk Terakhir)', leftMargin + col1Width + col2Width / 2, yPosition + 15);
       
+      yPosition += 40;
+
       // Table content
-      ctx.fillStyle = '#000000';
-      ctx.font = '12px Arial';
-      yPos += 40;
-      
       if (reportData.items.length === 0) {
         // Empty state
-        ctx.strokeStyle = '#d1d5db';
-        ctx.strokeRect(50, yPos, canvas.width - 100, 80);
+        const rowHeight = 120;
         
-        ctx.font = 'bold 36px Arial';
-        ctx.fillStyle = '#2563eb';
+        // Draw borders
+        ctx.strokeStyle = '#d1d5db'; // gray-300
+        ctx.lineWidth = 1;
+        ctx.strokeRect(leftMargin, yPosition, tableWidth, rowHeight);
+        ctx.strokeRect(leftMargin + col1Width, yPosition, 1, rowHeight); // Vertical separator
+        
+        // Left column - quantity
+        ctx.fillStyle = '#2563eb'; // blue-600
+        ctx.font = 'bold 48px Arial';
         ctx.textAlign = 'center';
-        ctx.fillText('0', 200, yPos + 50);
+        ctx.fillText('0', leftMargin + col1Width / 2, yPosition + 30);
         
+        ctx.fillStyle = '#6b7280'; // gray-500
         ctx.font = '12px Arial';
-        ctx.fillStyle = '#6b7280';
-        ctx.fillText('No items', 200, yPos + 70);
+        ctx.fillText('No items', leftMargin + col1Width / 2, yPosition + 85);
         
-        ctx.fillText('No Image', 550, yPos + 45);
-        yPos += 100;
+        // Right column - image placeholder
+        ctx.fillStyle = '#f3f4f6'; // gray-100
+        ctx.fillRect(leftMargin + col1Width + 20, yPosition + 20, col2Width - 40, 80);
+        
+        ctx.fillStyle = '#9ca3af'; // gray-400
+        ctx.font = '12px Arial';
+        ctx.fillText('No Image', leftMargin + col1Width + col2Width / 2, yPosition + 55);
+        
+        yPosition += rowHeight;
       } else {
-        reportData.items.forEach((item, index) => {
-          // Draw table row
-          ctx.strokeStyle = '#d1d5db';
-          ctx.strokeRect(50, yPos, canvas.width - 100, 80);
-          ctx.strokeRect(350, yPos, 1, 80); // Vertical separator
+        // Render items
+        for (const item of reportData.items) {
+          const rowHeight = 120;
           
-          // Item quantity
-          ctx.font = 'bold 36px Arial';
-          ctx.fillStyle = '#2563eb';
+          // Draw borders
+          ctx.strokeStyle = '#d1d5db'; // gray-300
+          ctx.lineWidth = 1;
+          ctx.strokeRect(leftMargin, yPosition, tableWidth, rowHeight);
+          ctx.strokeRect(leftMargin + col1Width, yPosition, 1, rowHeight); // Vertical separator
+          
+          // Left column - quantity and name
+          ctx.fillStyle = '#2563eb'; // blue-600
+          ctx.font = 'bold 48px Arial';
           ctx.textAlign = 'center';
-          ctx.fillText(item.quantity.toString(), 200, yPos + 50);
+          ctx.fillText(item.quantity.toString(), leftMargin + col1Width / 2, yPosition + 25);
           
-          // Item name
+          ctx.fillStyle = '#6b7280'; // gray-500
           ctx.font = '12px Arial';
-          ctx.fillStyle = '#6b7280';
-          ctx.fillText(item.name || 'No name', 200, yPos + 70);
+          const nameLines = wrapText(ctx, item.name || 'No name', col1Width - 20);
+          let nameY = yPosition + 80;
+          nameLines.forEach(line => {
+            ctx.fillText(line, leftMargin + col1Width / 2, nameY);
+            nameY += 14;
+          });
           
-          // Image placeholder
-          ctx.fillStyle = '#f3f4f6';
-          ctx.fillRect(450, yPos + 10, 100, 60);
-          ctx.fillStyle = '#9ca3af';
-          ctx.font = '10px Arial';
-          ctx.fillText(item.image ? 'Image' : 'No Image', 500, yPos + 45);
+          // Right column - image
+          const imageArea = {
+            x: leftMargin + col1Width + 20,
+            y: yPosition + 20,
+            width: col2Width - 40,
+            height: 80
+          };
           
-          yPos += 100;
-        });
+          if (item.image) {
+            try {
+              const img = await loadImage(item.image);
+              
+              // Calculate aspect ratio and fit image
+              const imgAspect = img.width / img.height;
+              const areaAspect = imageArea.width / imageArea.height;
+              
+              let drawWidth, drawHeight, drawX, drawY;
+              
+              if (imgAspect > areaAspect) {
+                // Image is wider
+                drawWidth = imageArea.width;
+                drawHeight = imageArea.width / imgAspect;
+                drawX = imageArea.x;
+                drawY = imageArea.y + (imageArea.height - drawHeight) / 2;
+              } else {
+                // Image is taller
+                drawHeight = imageArea.height;
+                drawWidth = imageArea.height * imgAspect;
+                drawX = imageArea.x + (imageArea.width - drawWidth) / 2;
+                drawY = imageArea.y;
+              }
+              
+              ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+            } catch (error) {
+              // Fallback if image fails to load
+              ctx.fillStyle = '#f3f4f6'; // gray-100
+              ctx.fillRect(imageArea.x, imageArea.y, imageArea.width, imageArea.height);
+              
+              ctx.fillStyle = '#9ca3af'; // gray-400
+              ctx.font = '12px Arial';
+              ctx.textAlign = 'center';
+              ctx.fillText('Image Error', imageArea.x + imageArea.width / 2, imageArea.y + imageArea.height / 2);
+            }
+          } else {
+            // No image placeholder
+            ctx.fillStyle = '#f3f4f6'; // gray-100
+            ctx.fillRect(imageArea.x, imageArea.y, imageArea.width, imageArea.height);
+            
+            ctx.fillStyle = '#9ca3af'; // gray-400
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('No Image', imageArea.x + imageArea.width / 2, imageArea.y + imageArea.height / 2);
+          }
+          
+          yPosition += rowHeight;
+        }
       }
-      
-      // Summary table
-      yPos += 30;
+
+      yPosition += 30;
+
+      // Summary Table
       const summaryData = [
         ['Pembukaan Tabungan (NOA)', reportData.summary.total.toString()],
         ['Pembukaan Deposit (NOA)', reportData.summary.deposits.toString()],
@@ -264,37 +309,40 @@ const Index = () => {
       ];
       
       summaryData.forEach(([label, value]) => {
+        const rowHeight = 40;
+        
         // Summary row background
-        ctx.fillStyle = '#2563eb';
-        ctx.fillRect(50, yPos, canvas.width - 100, 40);
+        ctx.fillStyle = '#2563eb'; // blue-600
+        ctx.fillRect(leftMargin, yPosition, tableWidth, rowHeight);
         
         // Summary text
         ctx.fillStyle = '#ffffff';
         ctx.font = 'bold 14px Arial';
         ctx.textAlign = 'left';
-        ctx.fillText(label, 70, yPos + 25);
+        ctx.fillText(label, leftMargin + 20, yPosition + 15);
         
         ctx.textAlign = 'center';
         ctx.font = 'bold 18px Arial';
-        ctx.fillText(value, 600, yPos + 25);
+        ctx.fillText(value, leftMargin + tableWidth * 0.8, yPosition + 12);
         
-        yPos += 50;
+        yPosition += rowHeight + 2;
       });
-      
+
       // Footer
-      ctx.fillStyle = '#6b7280';
+      yPosition = canvas.height - 50;
+      ctx.fillStyle = '#6b7280'; // gray-500
       ctx.font = '10px Arial';
       ctx.textAlign = 'center';
-      ctx.fillText(`Laporan dibuat pada: ${new Date().toLocaleString('id-ID')}`, canvas.width / 2, canvas.height - 30);
+      ctx.fillText(`Laporan dibuat pada: ${new Date().toLocaleString('id-ID')}`, canvas.width / 2, yPosition);
       
       // Download
       const link = document.createElement('a');
       link.download = `laporan-${reportData.employee || 'collection'}-${new Date().toISOString().split('T')[0]}.png`;
-      link.href = canvas.toDataURL('image/png');
+      link.href = canvas.toDataURL('image/png', 1.0);
       link.click();
 
       toast.success("Download PNG berhasil!", {
-        description: "Laporan telah berhasil didownload dalam format PNG."
+        description: "Laporan telah berhasil didownload dengan format yang sama seperti preview."
       });
     } catch (error) {
       console.error('Error generating PNG:', error);
@@ -306,8 +354,8 @@ const Index = () => {
     }
   };
 
-  // Method 3: Print to PDF (using browser's print function)
-  const printToPDF = () => {
+  // Print function for browser native print
+  const printReport = () => {
     const printWindow = window.open('', '_blank');
     if (printWindow) {
       const reportElement = document.getElementById('report-preview');
@@ -361,7 +409,7 @@ const Index = () => {
           </h1>
           
           <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-8">
-            Platform modern untuk membuat, melihat preview, dan mendownload laporan profesional dalam berbagai format
+            Platform modern untuk membuat, melihat preview, dan mendownload laporan profesional dalam format PNG
           </p>
 
           {/* Feature Pills */}
@@ -376,7 +424,7 @@ const Index = () => {
             </div>
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border border-slate-200">
               <CheckCircle2 className="w-4 h-4 text-purple-600" />
-              <span className="text-sm font-medium text-slate-700">Multi Format</span>
+              <span className="text-sm font-medium text-slate-700">Format Konsisten</span>
             </div>
           </div>
         </div>
@@ -429,25 +477,6 @@ const Index = () => {
               {/* Download Options */}
               <div className="flex flex-col sm:flex-row gap-3">
                 <Button 
-                  onClick={downloadAsPDF}
-                  disabled={isDownloading}
-                  className="bg-red-600 hover:bg-red-700 text-white shadow-lg h-12 px-6 font-semibold transition-all duration-200"
-                >
-                  {isDownloading ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-3"></div>
-                      <span>Memproses...</span>
-                    </>
-                  ) : (
-                    <>
-                      <FilePdf className="w-5 h-5 mr-2" />
-                      <span className="hidden sm:inline">Download PDF</span>
-                      <span className="sm:hidden">PDF</span>
-                    </>
-                  )}
-                </Button>
-
-                <Button 
                   onClick={downloadAsPNG}
                   disabled={isDownloading}
                   className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg h-12 px-6 font-semibold transition-all duration-200"
@@ -467,7 +496,7 @@ const Index = () => {
                 </Button>
 
                 <Button 
-                  onClick={printToPDF}
+                  onClick={printReport}
                   disabled={isDownloading}
                   className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg h-12 px-6 font-semibold transition-all duration-200"
                 >
@@ -486,7 +515,7 @@ const Index = () => {
                     <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
                     <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                   </div>
-                  <span className="text-sm font-medium text-slate-600">Preview Mode - Responsive</span>
+                  <span className="text-sm font-medium text-slate-600">Preview Mode - Format yang sama saat download</span>
                 </div>
               </div>
               <div className="p-2 sm:p-4 lg:p-6">
