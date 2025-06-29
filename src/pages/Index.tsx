@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ReportForm from '@/components/ReportForm';
 import ReportPreview from '@/components/ReportPreview';
-import { Download, FileText, CheckCircle2, Zap, Shield, FileImage } from 'lucide-react';
+import { Download, FileText, CheckCircle2, Zap, Shield, FileImage, AlertCircle } from 'lucide-react';
 import { toast } from "@/components/ui/sonner";
 import html2canvas from 'html2canvas';
 
@@ -49,99 +49,52 @@ const Index = () => {
 
   const [isDownloading, setIsDownloading] = useState(false);
 
-  // Fixed download function with better consistency
+  // Enhanced download function with dynamic height calculation
   const downloadAsPNG = async () => {
     setIsDownloading(true);
     try {
-      toast.info("Memproses laporan PNG...", {
-        description: "Sedang menggenerate file PNG dengan kualitas tinggi."
+      toast.info("🔄 Memproses laporan PNG...", {
+        description: "Menghitung ukuran optimal dan menggenerate file PNG berkualitas tinggi."
       });
 
-      // Get the preview element
-      const previewElement = document.getElementById('report-preview');
-      if (!previewElement) {
-        throw new Error('Report preview element not found');
-      }
-
-      // Create a dedicated download container with exact A4 dimensions
+      // Create a dedicated download container with dynamic height
       const downloadContainer = document.createElement('div');
       downloadContainer.style.cssText = `
         position: fixed;
-        top: -10000px;
-        left: -10000px;
+        top: -20000px;
+        left: -20000px;
         width: 794px;
-        height: 1123px;
         background: white;
         font-family: Arial, sans-serif;
-        overflow: hidden;
+        overflow: visible;
         z-index: -1;
+        box-sizing: border-box;
       `;
 
-      // Clone the preview content
-      const clonedContent = previewElement.cloneNode(true) as HTMLElement;
+      // Create the report content for download
+      const reportContent = createDownloadContent(reportData);
+      downloadContainer.innerHTML = reportContent;
       
-      // Force exact styling for download
-      clonedContent.style.cssText = `
-        width: 794px !important;
-        height: 1123px !important;
-        max-width: none !important;
-        min-height: 1123px !important;
-        transform: none !important;
-        scale: 1 !important;
-        margin: 0 !important;
-        padding: 40px !important;
-        box-sizing: border-box !important;
-        background: white !important;
-        font-family: Arial, sans-serif !important;
-        overflow: hidden !important;
-      `;
-
-      // Fix all nested elements to prevent responsive scaling
-      const allElements = clonedContent.querySelectorAll('*');
-      allElements.forEach((el: Element) => {
-        const element = el as HTMLElement;
-        // Remove responsive classes and force fixed sizing
-        element.style.maxWidth = 'none';
-        element.style.transform = 'none';
-        element.style.scale = '1';
-      });
-
-      // Specifically fix table and image sizing
-      const tables = clonedContent.querySelectorAll('table');
-      tables.forEach((table: Element) => {
-        const tableEl = table as HTMLElement;
-        tableEl.style.width = '100%';
-        tableEl.style.tableLayout = 'fixed';
-      });
-
-      const images = clonedContent.querySelectorAll('img');
-      images.forEach((img: Element) => {
-        const imgEl = img as HTMLElement;
-        imgEl.style.maxWidth = '100%';
-        imgEl.style.height = 'auto';
-      });
-
-      downloadContainer.appendChild(clonedContent);
       document.body.appendChild(downloadContainer);
 
-      // Wait for images to load
-      const imageElements = downloadContainer.querySelectorAll('img');
-      await Promise.all(Array.from(imageElements).map(img => {
-        if (img.complete) return Promise.resolve();
-        return new Promise((resolve) => {
-          img.onload = resolve;
-          img.onerror = resolve; // Continue even if image fails
-          setTimeout(resolve, 2000); // Timeout after 2 seconds
-        });
-      }));
+      // Wait for images to load and calculate actual height
+      await waitForImages(downloadContainer);
+      
+      // Calculate the actual content height
+      const actualHeight = Math.max(downloadContainer.scrollHeight, 1123);
+      downloadContainer.style.height = `${actualHeight}px`;
 
       // Small delay to ensure rendering is complete
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 800));
 
-      // Generate canvas with optimal settings
+      toast.info("📸 Mengambil screenshot...", {
+        description: "Sedang menggenerate gambar dengan resolusi tinggi."
+      });
+
+      // Generate canvas with dynamic height
       const canvas = await html2canvas(downloadContainer, {
         width: 794,
-        height: 1123,
+        height: actualHeight,
         scale: 2, // High DPI for quality
         useCORS: true,
         allowTaint: true,
@@ -149,32 +102,39 @@ const Index = () => {
         scrollX: 0,
         scrollY: 0,
         windowWidth: 794,
-        windowHeight: 1123,
-        ignoreElements: (element) => {
-          // Ignore any elements that might cause issues
-          return element.classList?.contains('no-print') || false;
-        },
+        windowHeight: actualHeight,
+        logging: false,
+        removeContainer: false,
+        foreignObjectRendering: true,
+        imageTimeout: 5000,
         onclone: (clonedDoc, element) => {
-          // Additional styling fixes in cloned document
+          // Force styles in cloned document
           const style = clonedDoc.createElement('style');
           style.textContent = `
             * {
               -webkit-print-color-adjust: exact !important;
               print-color-adjust: exact !important;
               color-adjust: exact !important;
+              box-sizing: border-box !important;
             }
             body {
               margin: 0 !important;
               padding: 0 !important;
               width: 794px !important;
-              height: 1123px !important;
+              overflow: visible !important;
             }
-            #report-preview {
+            img {
+              max-width: 100% !important;
+              height: auto !important;
+            }
+            table {
+              border-collapse: collapse !important;
+              width: 100% !important;
+            }
+            .report-container {
               width: 794px !important;
-              height: 1123px !important;
-              max-width: none !important;
-              transform: none !important;
-              scale: 1 !important;
+              background: white !important;
+              overflow: visible !important;
             }
           `;
           clonedDoc.head.appendChild(style);
@@ -194,12 +154,12 @@ const Index = () => {
       link.click();
       document.body.removeChild(link);
 
-      toast.success("Download PNG berhasil!", {
-        description: "Laporan telah berhasil didownload dengan kualitas tinggi."
+      toast.success("✅ Download PNG berhasil!", {
+        description: `Laporan berhasil didownload dengan ukuran ${canvas.width}x${canvas.height}px.`
       });
     } catch (error) {
       console.error('Error generating PNG:', error);
-      toast.error("Download PNG gagal!", {
+      toast.error("❌ Download PNG gagal!", {
         description: "Terjadi kesalahan saat menggenerate laporan PNG. Silakan coba lagi."
       });
     } finally {
@@ -207,60 +167,216 @@ const Index = () => {
     }
   };
 
+  // Function to create download-optimized content
+  const createDownloadContent = (data: ReportData) => {
+    const itemsHtml = data.items.length > 0 
+      ? data.items.map((item, index) => `
+          <tr style="border-bottom: 1px solid #d1d5db;">
+            <td style="border-right: 1px solid #d1d5db; padding: 32px; text-align: center; background: white; vertical-align: middle;">
+              <div style="font-size: 120px; font-weight: bold; color: #2563eb; margin-bottom: 12px; line-height: 1;">
+                ${item.quantity || '-'}
+              </div>
+            </td>
+            <td style="padding: 32px; text-align: center; background: white; vertical-align: middle;">
+              ${item.image ? `
+                <div style="display: flex; justify-content: center; align-items: center;">
+                  <img
+                    src="${item.image}"
+                    alt="Item ${index + 1}"
+                    style="max-width: 100%; max-height: 350px; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); border: 1px solid #d1d5db;"
+                  />
+                </div>
+              ` : `
+                <div style="width: 100%; height: 350px; background: #f3f4f6; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 16px; border: 1px solid #d1d5db;">
+                  No Image
+                </div>
+              `}
+            </td>
+          </tr>
+        `).join('')
+      : `
+          <tr style="border-bottom: 1px solid #d1d5db;">
+            <td style="border-right: 1px solid #d1d5db; padding: 32px; text-align: center; background: white; vertical-align: middle;">
+              <div style="font-size: 120px; font-weight: bold; color: #2563eb; margin-bottom: 12px; line-height: 1;">-</div>
+              <div style="font-size: 16px; color: #6b7280;">No items</div>
+            </td>
+            <td style="padding: 32px; text-align: center; background: white; vertical-align: middle;">
+              <div style="width: 100%; height: 350px; background: #f3f4f6; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 16px; border: 1px solid #d1d5db;">
+                No Image
+              </div>
+            </td>
+          </tr>
+        `;
+
+    return `
+      <div class="report-container" style="width: 794px; background: white; padding: 40px; box-sizing: border-box; font-family: Arial, sans-serif; overflow: visible;">
+        
+        <!-- Header Section -->
+        <div style="text-center; margin-bottom: 32px; border-bottom: 4px solid #2563eb; padding-bottom: 24px;">
+          <h1 style="font-size: 24px; font-weight: bold; color: #1e3a8a; margin-bottom: 16px; line-height: 1.2; margin-top: 0;">
+            ${data.title}
+          </h1>
+          <div style="color: #1d4ed8; line-height: 1.4;">
+            <p style="font-weight: 600; font-size: 16px; margin: 4px 0;">${data.address}</p>
+            <p style="font-weight: 600; font-size: 16px; margin: 4px 0;">${data.company}</p>
+          </div>
+        </div>
+
+        <!-- Report Info Section -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 32px; font-size: 14px;">
+          <div>
+            <div style="margin-bottom: 4px; font-weight: 600; color: #1e3a8a;">Periode :</div>
+            <div>${data.period}</div>
+          </div>
+          <div>
+            <div style="margin-bottom: 4px; font-weight: 600; color: #1e3a8a;">Karyawan :</div>
+            <div>${data.employee}</div>
+          </div>
+        </div>
+
+        <!-- Main Table Section -->
+        <div style="margin-bottom: 32px;">
+          <div style="box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1); border-radius: 8px; overflow: hidden; border: 1px solid #d1d5db;">
+            <table style="width: 100%; border-collapse: collapse;">
+              <!-- Table Header -->
+              <thead>
+                <tr style="background: #2563eb; color: white;">
+                  <th style="border-right: 1px solid #6b7280; padding: 16px; text-align: center; font-weight: 600; font-size: 18px;">
+                    Jumlah Cash Pick Up (NOA)
+                  </th>
+                  <th style="padding: 16px; text-align: center; font-weight: 600; font-size: 18px;">
+                    Foto (Struk Terakhir)
+                  </th>
+                </tr>
+              </thead>
+              
+              <!-- Table Body -->
+              <tbody>
+                ${itemsHtml}
+                
+                <!-- Summary Rows -->
+                <tr style="background: #2563eb; color: white; border-top: 1px solid #6b7280;">
+                  <td style="border-right: 1px solid #6b7280; padding: 16px; font-weight: 600; text-align: left; font-size: 16px;">
+                    Pembukaan Tabungan (NOA)
+                  </td>
+                  <td style="padding: 16px; text-align: center; font-weight: bold; font-size: 20px;">
+                    ${data.summary.total || '-'}
+                  </td>
+                </tr>
+                <tr style="background: #2563eb; color: white; border-top: 1px solid #6b7280;">
+                  <td style="border-right: 1px solid #6b7280; padding: 16px; font-weight: 600; text-align: left; font-size: 16px;">
+                    Pembukaan Deposit (NOA)
+                  </td>
+                  <td style="padding: 16px; text-align: center; font-weight: bold; font-size: 20px;">
+                    ${data.summary.deposits || '-'}
+                  </td>
+                </tr>
+                <tr style="background: #2563eb; color: white; border-top: 1px solid #6b7280;">
+                  <td style="border-right: 1px solid #6b7280; padding: 16px; font-weight: 600; text-align: left; font-size: 16px;">
+                    Rekomendasi Kredit
+                  </td>
+                  <td style="padding: 16px; text-align: center; font-weight: bold; font-size: 20px;">
+                    ${data.summary.recommendations || '-'}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Footer Section -->
+        <div style="margin-top: 48px; text-align: center; font-size: 14px; color: #6b7280;">
+          <p style="margin: 0;">Laporan dibuat pada: ${new Date().toLocaleString('id-ID')}</p>
+        </div>
+        
+      </div>
+    `;
+  };
+
+  // Function to wait for all images to load
+  const waitForImages = (container: HTMLElement): Promise<void> => {
+    const images = container.querySelectorAll('img');
+    const promises = Array.from(images).map(img => {
+      if (img.complete && img.naturalHeight !== 0) {
+        return Promise.resolve();
+      }
+      
+      return new Promise<void>((resolve) => {
+        const timeout = setTimeout(() => {
+          console.warn('Image load timeout:', img.src);
+          resolve();
+        }, 5000);
+
+        img.onload = () => {
+          clearTimeout(timeout);
+          resolve();
+        };
+        
+        img.onerror = () => {
+          clearTimeout(timeout);
+          console.warn('Image load error:', img.src);
+          resolve();
+        };
+      });
+    });
+
+    return Promise.all(promises).then(() => {});
+  };
+
   // Alternative download method using print-to-PDF approach
   const downloadViaPrint = () => {
     const printWindow = window.open('', '_blank');
     if (printWindow) {
-      const reportElement = document.getElementById('report-preview');
-      if (reportElement) {
-        printWindow.document.write(`
-          <!DOCTYPE html>
-          <html>
-            <head>
-              <title>Laporan - ${reportData.employee || 'Collection'}</title>
-              <style>
-                @page { 
-                  size: A4; 
-                  margin: 0; 
-                }
-                body { 
-                  margin: 0; 
-                  padding: 0;
-                  font-family: Arial, sans-serif; 
-                  -webkit-print-color-adjust: exact;
-                  print-color-adjust: exact;
-                  color-adjust: exact;
-                }
-                .report-container {
-                  width: 794px;
-                  height: 1123px;
-                  background: white;
-                  overflow: hidden;
-                }
-                table {
-                  border-collapse: collapse;
-                  width: 100%;
-                }
-                .no-print { 
-                  display: none !important; 
-                }
-              </style>
-            </head>
-            <body>
-              <div class="report-container">
-                ${reportElement.innerHTML}
-              </div>
-            </body>
-          </html>
-        `);
-        printWindow.document.close();
-        printWindow.focus();
-        
-        setTimeout(() => {
-          printWindow.print();
-          printWindow.close();
-        }, 500);
-      }
+      const reportContent = createDownloadContent(reportData);
+      
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Laporan - ${reportData.employee || 'Collection'}</title>
+            <style>
+              @page { 
+                size: A4; 
+                margin: 0; 
+              }
+              body { 
+                margin: 0; 
+                padding: 0;
+                font-family: Arial, sans-serif; 
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                color-adjust: exact;
+              }
+              .report-container {
+                width: 794px;
+                background: white;
+                overflow: visible;
+              }
+              table {
+                border-collapse: collapse;
+                width: 100%;
+              }
+              img {
+                max-width: 100%;
+                height: auto;
+              }
+              .no-print { 
+                display: none !important; 
+              }
+            </style>
+          </head>
+          <body>
+            ${reportContent}
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.focus();
+      
+      setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+      }, 1000);
     }
   };
 
@@ -289,11 +405,11 @@ const Index = () => {
             </div>
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border border-slate-200">
               <Shield className="w-4 h-4 text-green-600" />
-              <span className="text-sm font-medium text-slate-700">Aman & Terpercaya</span>
+              <span className="text-sm font-medium text-slate-700">Tidak Terpotong</span>
             </div>
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border border-slate-200">
               <CheckCircle2 className="w-4 h-4 text-purple-600" />
-              <span className="text-sm font-medium text-slate-700">Konsisten</span>
+              <span className="text-sm font-medium text-slate-700">Responsif</span>
             </div>
           </div>
         </div>
@@ -340,7 +456,7 @@ const Index = () => {
                 <h2 className="text-3xl font-bold text-slate-900 mb-2">
                   Preview Laporan
                 </h2>
-                <p className="text-slate-600">Lihat hasil laporan dengan foto dan font yang lebih besar</p>
+                <p className="text-slate-600">Hasil download akan persis sama dengan preview - tidak terpotong</p>
               </div>
               
               {/* Download Options */}
@@ -373,6 +489,19 @@ const Index = () => {
                   <span className="hidden sm:inline">Print PDF</span>
                   <span className="sm:hidden">Print</span>
                 </Button>
+              </div>
+            </div>
+
+            {/* Info Alert */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                <div>
+                  <h4 className="font-semibold text-blue-900 mb-1">Download Responsif & Tidak Terpotong</h4>
+                  <p className="text-blue-700 text-sm">
+                    Sistem otomatis menghitung tinggi konten dan menyesuaikan ukuran download agar semua konten termasuk gambar tidak terpotong.
+                  </p>
+                </div>
               </div>
             </div>
             
