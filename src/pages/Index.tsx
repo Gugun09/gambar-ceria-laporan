@@ -261,20 +261,11 @@ const Index = () => {
           ctx.strokeRect(leftMargin, yPosition, tableWidth, rowHeight);
           ctx.strokeRect(leftMargin + col1Width, yPosition, 1, rowHeight); // Vertical separator
           
-          // Left column - quantity and name
+          // Left column - quantity only (no name)
           ctx.fillStyle = '#2563eb'; // blue-600
           ctx.font = 'bold 48px Arial';
           ctx.textAlign = 'center';
-          ctx.fillText(item.quantity.toString(), leftMargin + col1Width / 2, yPosition + 25);
-          
-          ctx.fillStyle = '#6b7280'; // gray-500
-          ctx.font = '12px Arial';
-          const nameLines = wrapText(ctx, item.name || 'No name', col1Width - 20);
-          let nameY = yPosition + 80;
-          nameLines.forEach(line => {
-            ctx.fillText(line, leftMargin + col1Width / 2, nameY);
-            nameY += 14;
-          });
+          ctx.fillText(item.quantity.toString(), leftMargin + col1Width / 2, yPosition + 40);
           
           // Right column - image with rounded corners
           const imageArea = {
@@ -493,7 +484,7 @@ const Index = () => {
             </div>
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border border-slate-200">
               <CheckCircle2 className="w-4 h-4 text-purple-600" />
-              <span className="text-sm font-medium text-slate-700">Tabel Terpadu</span>
+              <span className="text-sm font-medium text-slate-700">Input Manual</span>
             </div>
           </div>
         </div>
@@ -584,7 +575,7 @@ const Index = () => {
                     <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
                     <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                   </div>
-                  <span className="text-sm font-medium text-slate-600">Preview Mode - Tabel terpadu dengan border gray dan sudut melengkung</span>
+                  <span className="text-sm font-medium text-slate-600">Preview Mode - Tanpa nama item, summary input manual</span>
                 </div>
               </div>
               <div className="p-2 sm:p-4 lg:p-6">

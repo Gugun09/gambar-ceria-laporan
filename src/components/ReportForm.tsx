@@ -57,29 +57,13 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
       item.id === id ? { ...item, [field]: value } : item
     );
     setReportData({ ...reportData, items: updatedItems });
-    
-    // Update summary
-    const total = updatedItems.reduce((sum, item) => sum + (item.quantity || 0), 0);
-    setReportData({
-      ...reportData,
-      items: updatedItems,
-      summary: {
-        ...reportData.summary,
-        total
-      }
-    });
   };
 
   const removeItem = (id: number) => {
     const updatedItems = reportData.items.filter(item => item.id !== id);
-    const total = updatedItems.reduce((sum, item) => sum + (item.quantity || 0), 0);
     setReportData({
       ...reportData,
-      items: updatedItems,
-      summary: {
-        ...reportData.summary,
-        total
-      }
+      items: updatedItems
     });
     toast.info("Item dihapus", {
       description: "Item telah berhasil dihapus dari laporan."
@@ -269,19 +253,6 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <Label className="text-slate-700 font-semibold flex items-center gap-2 mb-2">
-                      <FileText className="w-4 h-4 text-slate-600" />
-                      Nama Item
-                    </Label>
-                    <Input
-                      value={item.name}
-                      onChange={(e) => updateItem(item.id, 'name', e.target.value)}
-                      placeholder="Contoh: Whiskas Cat Food"
-                      className="h-10 border-slate-300 focus:border-slate-500 transition-colors"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label className="text-slate-700 font-semibold flex items-center gap-2 mb-2">
                       <Hash className="w-4 h-4 text-slate-600" />
                       Jumlah
                     </Label>
@@ -294,30 +265,30 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
                       min="0"
                     />
                   </div>
-                </div>
-                
-                <div>
-                  <Label className="text-slate-700 font-semibold flex items-center gap-2 mb-2">
-                    <Camera className="w-4 h-4 text-slate-600" />
-                    Upload Gambar
-                  </Label>
+                  
                   <div>
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleImageUpload(item.id, e)}
-                      className="hidden"
-                      id={`image-${item.id}`}
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => document.getElementById(`image-${item.id}`)?.click()}
-                      className="w-full h-10 border-2 border-dashed border-slate-300 hover:border-slate-400 transition-colors"
-                    >
-                      <Upload className="w-4 h-4 mr-2" />
-                      {item.image ? 'Ganti Gambar' : 'Pilih Gambar'}
-                    </Button>
+                    <Label className="text-slate-700 font-semibold flex items-center gap-2 mb-2">
+                      <Camera className="w-4 h-4 text-slate-600" />
+                      Upload Gambar
+                    </Label>
+                    <div>
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleImageUpload(item.id, e)}
+                        className="hidden"
+                        id={`image-${item.id}`}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => document.getElementById(`image-${item.id}`)?.click()}
+                        className="w-full h-10 border-2 border-dashed border-slate-300 hover:border-slate-400 transition-colors"
+                      >
+                        <Upload className="w-4 h-4 mr-2" />
+                        {item.image ? 'Ganti Gambar' : 'Pilih Gambar'}
+                      </Button>
+                    </div>
                   </div>
                 </div>
                 
@@ -326,7 +297,7 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
                     <div className="relative group">
                       <img
                         src={item.image}
-                        alt={item.name}
+                        alt={`Item ${index + 1}`}
                         className="w-24 h-24 object-cover rounded-lg border border-slate-200 shadow-sm"
                       />
                       <Button
@@ -346,7 +317,7 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
         </div>
       </div>
 
-      {/* Summary Section */}
+      {/* Summary Section - Manual Input */}
       <Card className="p-6 bg-slate-50 border border-slate-200">
         <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-200">
           <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center shadow-sm">
@@ -354,7 +325,7 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
           </div>
           <div>
             <h3 className="text-xl font-bold text-slate-900">Summary</h3>
-            <p className="text-sm text-slate-600">Ringkasan data laporan</p>
+            <p className="text-sm text-slate-600">Input manual data summary</p>
           </div>
         </div>
         
@@ -366,12 +337,12 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
             </Label>
             <Input
               type="number"
-              value={reportData.summary.deposits}
+              value={reportData.summary.total}
               onChange={(e) => setReportData({
                 ...reportData,
                 summary: {
                   ...reportData.summary,
-                  deposits: parseInt(e.target.value) || 0
+                  total: parseInt(e.target.value) || 0
                 }
               })}
               className="h-10 border-slate-300 focus:border-slate-500 transition-colors"

@@ -77,14 +77,13 @@ const ReportPreview = ({ reportData }: ReportPreviewProps) => {
                             <div className="text-3xl sm:text-4xl lg:text-6xl font-bold text-blue-600 mb-1 sm:mb-2">
                               {item.quantity}
                             </div>
-                            <div className="text-xs sm:text-sm text-gray-600 break-words">{item.name}</div>
                           </td>
                           <td className="p-3 sm:p-6 text-center bg-white">
                             {item.image ? (
                               <div className="flex justify-center">
                                 <img
                                   src={item.image}
-                                  alt={item.name}
+                                  alt={`Item ${index + 1}`}
                                   className="max-w-full h-24 sm:h-32 lg:h-48 object-contain rounded-lg shadow-sm"
                                 />
                               </div>
