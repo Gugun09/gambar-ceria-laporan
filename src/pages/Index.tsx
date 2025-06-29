@@ -179,7 +179,7 @@ const Index = () => {
     });
   };
 
-  // Create A4 standard element with proper padding
+  // Create A4 standard element with proper padding - MATCHING REFERENCE IMAGE
   const createA4StandardElement = (): HTMLElement => {
     const element = document.createElement('div');
     element.className = 'a4-container';
@@ -201,29 +201,29 @@ const Index = () => {
     return element;
   };
 
-  // Generate A4 optimized report HTML with perfect center alignment
+  // Generate A4 optimized report HTML - MATCHING REFERENCE IMAGE EXACTLY
   const generateA4ReportHTML = (): string => {
     const itemsHTML = reportData.items.length > 0 
       ? reportData.items.map((item, index) => `
-          <tr style="border-bottom: 1px solid #d1d5db;">
-            <td style="border-right: 1px solid #d1d5db; padding: 8px; text-align: center; background: white; vertical-align: middle; width: 50%;">
-              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 140px;">
-                <div style="font-size: 28px; font-weight: bold; color: #2563eb; line-height: 1;">
+          <tr style="border: 1px solid #4a5568;">
+            <td style="border-right: 1px solid #4a5568; padding: 20px; text-align: center; background: white; vertical-align: middle; width: 50%; height: 200px;">
+              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                <div style="font-size: 72px; font-weight: bold; color: #2563eb; line-height: 1; font-family: Arial, sans-serif;">
                   ${item.quantity || '-'}
                 </div>
               </div>
             </td>
-            <td style="padding: 8px; text-align: center; background: white; vertical-align: middle; width: 50%;">
-              <div style="display: flex; align-items: center; justify-content: center; height: 100%; min-height: 140px;">
+            <td style="padding: 20px; text-align: center; background: white; vertical-align: middle; width: 50%; height: 200px; border: 1px solid #4a5568;">
+              <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
                 ${item.image ? `
                   <img
                     src="${item.image}"
                     alt="Item ${index + 1}"
-                    style="max-width: 100%; max-height: 120px; object-fit: contain; border-radius: 4px; border: 1px solid #d1d5db;"
+                    style="max-width: 180px; max-height: 160px; object-fit: contain; border-radius: 8px;"
                     crossorigin="anonymous"
                   />
                 ` : `
-                  <div style="width: 200px; height: 120px; background: #f3f4f6; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 10px; border: 1px solid #d1d5db;">
+                  <div style="width: 180px; height: 160px; background: #f7fafc; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #a0aec0; font-size: 12px; border: 1px solid #e2e8f0;">
                     No Image
                   </div>
                 `}
@@ -232,16 +232,15 @@ const Index = () => {
           </tr>
         `).join('')
       : `
-          <tr style="border-bottom: 1px solid #d1d5db;">
-            <td style="border-right: 1px solid #d1d5db; padding: 8px; text-align: center; background: white; vertical-align: middle;">
-              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 140px;">
-                <div style="font-size: 28px; font-weight: bold; color: #2563eb; line-height: 1;">-</div>
-                <div style="font-size: 9px; color: #6b7280; margin-top: 4px;">No items</div>
+          <tr style="border: 1px solid #4a5568;">
+            <td style="border-right: 1px solid #4a5568; padding: 20px; text-align: center; background: white; vertical-align: middle; height: 200px;">
+              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                <div style="font-size: 72px; font-weight: bold; color: #2563eb; line-height: 1; font-family: Arial, sans-serif;">-</div>
               </div>
             </td>
-            <td style="padding: 8px; text-align: center; background: white; vertical-align: middle;">
-              <div style="display: flex; align-items: center; justify-content: center; height: 100%; min-height: 140px;">
-                <div style="width: 200px; height: 120px; background: #f3f4f6; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 10px; border: 1px solid #d1d5db;">
+            <td style="padding: 20px; text-align: center; background: white; vertical-align: middle; height: 200px; border: 1px solid #4a5568;">
+              <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
+                <div style="width: 180px; height: 160px; background: #f7fafc; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #a0aec0; font-size: 12px; border: 1px solid #e2e8f0;">
                   No Image
                 </div>
               </div>
@@ -250,42 +249,42 @@ const Index = () => {
         `;
 
     return `
-      <div style="width: 100%; height: 100%; display: flex; flex-direction: column;">
+      <div style="width: 100%; height: 100%; display: flex; flex-direction: column; font-family: Arial, sans-serif;">
         
-        <!-- Header -->
-        <div style="text-align: center; margin-bottom: 16px; border-bottom: 2px solid #2563eb; padding-bottom: 12px; flex-shrink: 0;">
-          <h1 style="font-size: 16px; font-weight: bold; color: #1e3a8a; margin-bottom: 8px; line-height: 1.2; margin-top: 0;">
+        <!-- Header - MATCHING REFERENCE -->
+        <div style="text-align: center; margin-bottom: 24px; border-bottom: 4px solid #2563eb; padding-bottom: 16px; flex-shrink: 0;">
+          <h1 style="font-size: 24px; font-weight: bold; color: #1e3a8a; margin-bottom: 12px; line-height: 1.2; margin-top: 0; font-family: Arial, sans-serif;">
             ${reportData.title}
           </h1>
-          <div style="color: #1d4ed8; line-height: 1.3;">
-            <p style="font-weight: 600; font-size: 11px; margin: 1px 0;">${reportData.address}</p>
-            <p style="font-weight: 600; font-size: 11px; margin: 1px 0;">${reportData.company}</p>
+          <div style="color: #1d4ed8; line-height: 1.4; font-family: Arial, sans-serif;">
+            <p style="font-weight: 600; font-size: 14px; margin: 2px 0;">${reportData.address}</p>
+            <p style="font-weight: 600; font-size: 14px; margin: 2px 0;">${reportData.company}</p>
           </div>
         </div>
 
-        <!-- Report Info - Using Requested Format -->
-        <div style="margin-bottom: 32px; font-size: 16px; flex-shrink: 0;">
+        <!-- Report Info - MATCHING REFERENCE FORMAT -->
+        <div style="margin-bottom: 24px; font-size: 16px; flex-shrink: 0; font-family: Arial, sans-serif;">
           <div style="display: flex; align-items: center; margin-bottom: 8px;">
-            <span style="font-weight: 700; color: #1e3a8a; min-width: 120px;">Periode</span>
-            <span style="margin: 0 12px; font-weight: 700;">:</span>
-            <span>${reportData.period}</span>
+            <span style="font-weight: 700; color: #1e3a8a; min-width: 100px; font-family: Arial, sans-serif;">Periode</span>
+            <span style="margin: 0 12px; font-weight: 700; font-family: Arial, sans-serif;">:</span>
+            <span style="font-family: Arial, sans-serif;">${reportData.period}</span>
           </div>
           <div style="display: flex; align-items: center; margin-bottom: 8px;">
-            <span style="font-weight: 700; color: #1e3a8a; min-width: 120px;">Karyawan</span>
-            <span style="margin: 0 12px; font-weight: 700;">:</span>
-            <span>${reportData.employee}</span>
+            <span style="font-weight: 700; color: #1e3a8a; min-width: 100px; font-family: Arial, sans-serif;">Karyawan</span>
+            <span style="margin: 0 12px; font-weight: 700; font-family: Arial, sans-serif;">:</span>
+            <span style="font-family: Arial, sans-serif;">${reportData.employee}</span>
           </div>
         </div>
 
-        <!-- Main Table -->
+        <!-- Main Table - MATCHING REFERENCE EXACTLY -->
         <div style="flex: 1; display: flex; flex-direction: column;">
-          <table style="width: 100%; border-collapse: collapse; border: 1px solid #d1d5db; border-radius: 6px; overflow: hidden; flex: 1;">
+          <table style="width: 100%; border-collapse: collapse; border: 2px solid #4a5568; flex: 1;">
             <thead>
               <tr style="background: #2563eb; color: white;">
-                <th style="border-right: 1px solid #6b7280; padding: 8px; text-align: center; font-weight: 600; font-size: 11px; width: 50%; vertical-align: middle;">
+                <th style="border-right: 1px solid #4a5568; padding: 12px; text-align: center; font-weight: 600; font-size: 14px; width: 50%; vertical-align: middle; font-family: Arial, sans-serif;">
                   Jumlah Cash Pick Up (NOA)
                 </th>
-                <th style="padding: 8px; text-align: center; font-weight: 600; font-size: 11px; width: 50%; vertical-align: middle;">
+                <th style="padding: 12px; text-align: center; font-weight: 600; font-size: 14px; width: 50%; vertical-align: middle; font-family: Arial, sans-serif;">
                   Foto (Struk Terakhir)
                 </th>
               </tr>
@@ -293,44 +292,39 @@ const Index = () => {
             <tbody>
               ${itemsHTML}
               
-              <!-- Summary -->
-              <tr style="background: #2563eb; color: white; border-top: 1px solid #6b7280;">
-                <td style="border-right: 1px solid #6b7280; padding: 6px; font-weight: 600; text-align: center; font-size: 9px; vertical-align: middle;">
+              <!-- Summary - MATCHING REFERENCE -->
+              <tr style="background: #2563eb; color: white; border-top: 2px solid #4a5568;">
+                <td style="border-right: 1px solid #4a5568; padding: 12px; font-weight: 600; text-align: center; font-size: 12px; vertical-align: middle; font-family: Arial, sans-serif;">
                   Pembukaan Tabungan (NOA)
                 </td>
-                <td style="padding: 6px; text-align: center; font-weight: bold; font-size: 10px; vertical-align: middle;">
+                <td style="padding: 12px; text-align: center; font-weight: bold; font-size: 18px; vertical-align: middle; font-family: Arial, sans-serif;">
                   <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
-                    ${reportData.summary.total || '-'}
+                    ${reportData.summary.total || '1'}
                   </div>
                 </td>
               </tr>
-              <tr style="background: #2563eb; color: white; border-top: 1px solid #6b7280;">
-                <td style="border-right: 1px solid #6b7280; padding: 6px; font-weight: 600; text-align: center; font-size: 9px; vertical-align: middle;">
+              <tr style="background: #2563eb; color: white; border-top: 1px solid #4a5568;">
+                <td style="border-right: 1px solid #4a5568; padding: 12px; font-weight: 600; text-align: center; font-size: 12px; vertical-align: middle; font-family: Arial, sans-serif;">
                   Pembukaan Deposit (NOA)
                 </td>
-                <td style="padding: 6px; text-align: center; font-weight: bold; font-size: 10px; vertical-align: middle;">
+                <td style="padding: 12px; text-align: center; font-weight: bold; font-size: 18px; vertical-align: middle; font-family: Arial, sans-serif;">
                   <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
-                    ${reportData.summary.deposits || '-'}
+                    ${reportData.summary.deposits || '0'}
                   </div>
                 </td>
               </tr>
-              <tr style="background: #2563eb; color: white; border-top: 1px solid #6b7280;">
-                <td style="border-right: 1px solid #6b7280; padding: 6px; font-weight: 600; text-align: center; font-size: 9px; vertical-align: middle;">
+              <tr style="background: #2563eb; color: white; border-top: 1px solid #4a5568;">
+                <td style="border-right: 1px solid #4a5568; padding: 12px; font-weight: 600; text-align: center; font-size: 12px; vertical-align: middle; font-family: Arial, sans-serif;">
                   Rekomendasi Kredit
                 </td>
-                <td style="padding: 6px; text-align: center; font-weight: bold; font-size: 10px; vertical-align: middle;">
+                <td style="padding: 12px; text-align: center; font-weight: bold; font-size: 18px; vertical-align: middle; font-family: Arial, sans-serif;">
                   <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
-                    ${reportData.summary.recommendations || '-'}
+                    ${reportData.summary.recommendations || '0'}
                   </div>
                 </td>
               </tr>
             </tbody>
           </table>
-        </div>
-
-        <!-- Footer -->
-        <div style="margin-top: 12px; text-align: center; font-size: 8px; color: #6b7280; flex-shrink: 0;">
-          <p style="margin: 0;">Laporan dibuat pada: ${new Date().toLocaleString('id-ID')}</p>
         </div>
         
       </div>
