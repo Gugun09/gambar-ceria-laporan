@@ -112,10 +112,6 @@ const ReportPreview = ({ reportData }: ReportPreviewProps) => {
                   {/* Summary Section - Integrated into the same table */}
                   <tr>
                     <td colSpan={2} className="border border-gray-300 p-0">
-                      {/* Summary Header */}
-                      <div className="bg-blue-700 text-white p-2 sm:p-3 text-center">
-                        <h3 className="font-bold text-sm sm:text-base">RINGKASAN LAPORAN</h3>
-                      </div>
                       
                       {/* Summary Content */}
                       <div className="bg-white">
