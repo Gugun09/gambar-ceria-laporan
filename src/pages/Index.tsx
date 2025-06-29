@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ReportForm from '@/components/ReportForm';
 import ReportPreview from '@/components/ReportPreview';
-import { Download, FileText, CheckCircle2, Zap, Shield, FileImage, FilePdf } from 'lucide-react';
+import { Download, FileText, CheckCircle2, Zap, Shield, FileImage, File as FilePdf } from 'lucide-react';
 import { toast } from "@/components/ui/sonner";
 import jsPDF from 'jspdf';
 
