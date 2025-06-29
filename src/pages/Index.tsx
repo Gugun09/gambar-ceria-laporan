@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ReportForm from '@/components/ReportForm';
 import ReportPreview from '@/components/ReportPreview';
-import { Download, FileText, CheckCircle2, Zap, Shield, FileImage, AlertCircle } from 'lucide-react';
+import { Download, FileText, CheckCircle2, Zap, Shield, FileImage, Printer } from 'lucide-react';
 import { toast } from "@/components/ui/sonner";
 import html2canvas from 'html2canvas';
 
@@ -391,35 +391,48 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-slate-50">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-        {/* Header Section */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-900 rounded-2xl mb-6 shadow-lg">
-            <FileText className="w-8 h-8 text-white" />
+        {/* Professional Header Section */}
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-blue-800 rounded-3xl mb-8 shadow-xl">
+            <FileText className="w-10 h-10 text-white" />
           </div>
           
-          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
-            Sistem Laporan A4 Standard
+          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-900 via-blue-700 to-blue-600 bg-clip-text text-transparent mb-6">
+            Professional Report System
           </h1>
           
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-8">
-            Platform dengan padding standar A4 (3cm top/bottom, 4cm left/right) untuk hasil download yang presisi
+          <p className="text-xl text-slate-600 max-w-3xl mx-auto mb-10 leading-relaxed">
+            Sistem laporan profesional dengan standar A4 internasional. 
+            <br />
+            <span className="font-semibold text-blue-700">Padding presisi 3cm top/bottom, 4cm left/right</span> untuk hasil cetak yang sempurna.
           </p>
 
-          {/* Feature Pills */}
-          <div className="flex flex-wrap justify-center gap-4">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border border-slate-200">
-              <Zap className="w-4 h-4 text-blue-600" />
-              <span className="text-sm font-medium text-slate-700">A4 Standard</span>
+          {/* Professional Feature Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200 hover:shadow-xl transition-all duration-300">
+              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4 mx-auto">
+                <Zap className="w-6 h-6 text-blue-600" />
+              </div>
+              <h3 className="font-bold text-slate-900 mb-2">A4 Standard</h3>
+              <p className="text-sm text-slate-600">Ukuran 794×1123px sesuai standar internasional</p>
             </div>
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border border-slate-200">
-              <Shield className="w-4 h-4 text-green-600" />
-              <span className="text-sm font-medium text-slate-700">Padding 3:4</span>
+            
+            <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200 hover:shadow-xl transition-all duration-300">
+              <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4 mx-auto">
+                <Shield className="w-6 h-6 text-green-600" />
+              </div>
+              <h3 className="font-bold text-slate-900 mb-2">Padding Presisi</h3>
+              <p className="text-sm text-slate-600">Margin 3:4 ratio untuk hasil profesional</p>
             </div>
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border border-slate-200">
-              <CheckCircle2 className="w-4 h-4 text-purple-600" />
-              <span className="text-sm font-medium text-slate-700">794x1123px</span>
+            
+            <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200 hover:shadow-xl transition-all duration-300">
+              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4 mx-auto">
+                <CheckCircle2 className="w-6 h-6 text-purple-600" />
+              </div>
+              <h3 className="font-bold text-slate-900 mb-2">Print Ready</h3>
+              <p className="text-sm text-slate-600">Siap cetak dengan kualitas tinggi</p>
             </div>
           </div>
         </div>
@@ -427,65 +440,74 @@ const Index = () => {
         {/* Main Content */}
         <Tabs defaultValue="form" className="space-y-8">
           <div className="flex justify-center">
-            <TabsList className="grid w-full max-w-md grid-cols-2 bg-white shadow-sm border border-slate-200 h-12 p-1">
+            <TabsList className="grid w-full max-w-lg grid-cols-2 bg-white shadow-lg border border-slate-200 h-14 p-1 rounded-2xl">
               <TabsTrigger 
                 value="form" 
-                className="data-[state=active]:bg-slate-900 data-[state=active]:text-white font-medium transition-all duration-200"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-blue-700 data-[state=active]:text-white font-semibold transition-all duration-300 rounded-xl"
               >
-                📝 Form Input
+                <FileText className="w-4 h-4 mr-2" />
+                Form Input
               </TabsTrigger>
               <TabsTrigger 
                 value="preview" 
-                className="data-[state=active]:bg-slate-900 data-[state=active]:text-white font-medium transition-all duration-200"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-blue-700 data-[state=active]:text-white font-semibold transition-all duration-300 rounded-xl"
               >
-                👁️ Preview
+                <FileImage className="w-4 h-4 mr-2" />
+                Preview & Download
               </TabsTrigger>
             </TabsList>
           </div>
 
           <TabsContent value="form" className="space-y-6">
-            <Card className="bg-white shadow-lg border border-slate-200">
-              <div className="bg-slate-900 p-6">
-                <h2 className="text-2xl font-bold text-white flex items-center gap-3">
-                  <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                    📋
+            <Card className="bg-white shadow-xl border border-slate-200 rounded-3xl overflow-hidden">
+              <div className="bg-gradient-to-r from-blue-600 to-blue-800 p-8">
+                <h2 className="text-3xl font-bold text-white flex items-center gap-4">
+                  <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center">
+                    <FileText className="w-6 h-6 text-white" />
                   </div>
                   Input Data Laporan
                 </h2>
-                <p className="text-slate-300 mt-2">Isi form di bawah untuk membuat laporan A4 standard</p>
+                <p className="text-blue-100 mt-3 text-lg">Lengkapi form di bawah untuk membuat laporan A4 profesional</p>
               </div>
-              <div className="p-6">
+              <div className="p-8">
                 <ReportForm reportData={reportData} setReportData={setReportData} />
               </div>
             </Card>
           </TabsContent>
 
-          <TabsContent value="preview" className="space-y-6">
-            <div className="flex flex-col lg:flex-row gap-6 lg:items-center lg:justify-between">
+          <TabsContent value="preview" className="space-y-8">
+            <div className="flex flex-col lg:flex-row gap-8 lg:items-center lg:justify-between">
               <div>
-                <h2 className="text-3xl font-bold text-slate-900 mb-2">
+                <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent mb-3">
                   Preview Laporan A4
                 </h2>
-                <p className="text-slate-600">Download dengan padding standar A4: 3cm top/bottom, 4cm left/right</p>
+                <p className="text-lg text-slate-600">Download dengan padding standar A4 profesional</p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">794×1123px</span>
+                  <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">3cm top/bottom</span>
+                  <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">4cm left/right</span>
+                </div>
               </div>
               
-              {/* Download Options */}
-              <div className="flex flex-col sm:flex-row gap-3">
+              {/* Professional Download Options */}
+              <div className="flex flex-col sm:flex-row gap-4">
                 <Button 
                   onClick={downloadAsPNG}
                   disabled={isDownloading}
-                  className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg h-12 px-6 font-semibold transition-all duration-200"
+                  className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-xl h-14 px-8 font-bold transition-all duration-300 rounded-2xl"
                 >
                   {isDownloading ? (
                     <>
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-3"></div>
-                      <span>Memproses...</span>
+                      <span>Memproses A4...</span>
                     </>
                   ) : (
                     <>
-                      <FileImage className="w-5 h-5 mr-2" />
-                      <span className="hidden sm:inline">Download A4 PNG</span>
-                      <span className="sm:hidden">A4 PNG</span>
+                      <FileImage className="w-5 h-5 mr-3" />
+                      <div className="text-left">
+                        <div className="text-sm font-bold">Download PNG</div>
+                        <div className="text-xs opacity-90">A4 Standard</div>
+                      </div>
                     </>
                   )}
                 </Button>
@@ -493,44 +515,67 @@ const Index = () => {
                 <Button 
                   onClick={downloadViaPrint}
                   disabled={isDownloading}
-                  className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg h-12 px-6 font-semibold transition-all duration-200"
+                  className="bg-gradient-to-r from-slate-700 to-slate-900 hover:from-slate-800 hover:to-slate-950 text-white shadow-xl h-14 px-8 font-bold transition-all duration-300 rounded-2xl"
                 >
-                  <Download className="w-5 h-5 mr-2" />
-                  <span className="hidden sm:inline">Print A4</span>
-                  <span className="sm:hidden">Print</span>
+                  <Printer className="w-5 h-5 mr-3" />
+                  <div className="text-left">
+                    <div className="text-sm font-bold">Print A4</div>
+                    <div className="text-xs opacity-90">Direct Print</div>
+                  </div>
                 </Button>
               </div>
             </div>
 
-            {/* A4 Info Alert */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+            {/* Professional A4 Info Panel */}
+            <div className="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-2xl p-6">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center flex-shrink-0">
+                  <CheckCircle2 className="w-6 h-6 text-white" />
+                </div>
                 <div>
-                  <h4 className="font-semibold text-blue-900 mb-1">Standar A4 Professional</h4>
-                  <p className="text-blue-700 text-sm">
-                    Download menggunakan ukuran A4 standar (794x1123px) dengan padding profesional:
-                    <br />• <strong>Top/Bottom:</strong> 3cm (113px) - Standar margin atas/bawah
-                    <br />• <strong>Left/Right:</strong> 4cm (151px) - Standar margin kiri/kanan  
-                    <br />• <strong>Content Area:</strong> 492x897px - Area konten optimal
-                    <br />• <strong>Scale:</strong> 2x untuk kualitas tinggi
-                  </p>
+                  <h4 className="text-xl font-bold text-blue-900 mb-3">Standar A4 Professional</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-blue-800">
+                    <div>
+                      <h5 className="font-semibold mb-2">📐 Dimensi Kertas</h5>
+                      <ul className="text-sm space-y-1">
+                        <li>• <strong>Width:</strong> 794px (21cm)</li>
+                        <li>• <strong>Height:</strong> 1123px (29.7cm)</li>
+                        <li>• <strong>DPI:</strong> 96 (Standard Web)</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h5 className="font-semibold mb-2">📏 Padding Margin</h5>
+                      <ul className="text-sm space-y-1">
+                        <li>• <strong>Top/Bottom:</strong> 3cm (113px)</li>
+                        <li>• <strong>Left/Right:</strong> 4cm (151px)</li>
+                        <li>• <strong>Content Area:</strong> 492×897px</li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div className="mt-4 p-3 bg-white/70 rounded-xl">
+                    <p className="text-sm text-blue-700">
+                      <strong>🎯 Output:</strong> File PNG berkualitas tinggi (2x scale) siap untuk pencetakan profesional dengan margin standar office.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
             
-            <Card className="bg-white shadow-lg border border-slate-200">
-              <div className="bg-slate-50 p-4 border-b border-slate-200">
-                <div className="flex items-center gap-3">
+            <Card className="bg-white shadow-2xl border border-slate-200 rounded-3xl overflow-hidden">
+              <div className="bg-gradient-to-r from-slate-100 to-slate-200 p-6 border-b border-slate-300">
+                <div className="flex items-center gap-4">
                   <div className="flex gap-2">
-                    <div className="w-3 h-3 bg-red-400 rounded-full"></div>
-                    <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
-                    <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+                    <div className="w-4 h-4 bg-red-500 rounded-full shadow-sm"></div>
+                    <div className="w-4 h-4 bg-yellow-500 rounded-full shadow-sm"></div>
+                    <div className="w-4 h-4 bg-green-500 rounded-full shadow-sm"></div>
                   </div>
-                  <span className="text-sm font-medium text-slate-600">Preview Mode - A4 Standard (794x1123px)</span>
+                  <div>
+                    <span className="font-bold text-slate-800">Preview Mode</span>
+                    <span className="text-slate-600 ml-2">A4 Standard (794×1123px) • Padding 3:4</span>
+                  </div>
                 </div>
               </div>
-              <div className="p-2 sm:p-4 lg:p-6">
+              <div className="p-2 sm:p-4 lg:p-8 bg-slate-50">
                 <ReportPreview reportData={reportData} />
               </div>
             </Card>
