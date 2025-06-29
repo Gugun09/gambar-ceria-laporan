@@ -1,11 +1,15 @@
-
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Trash2, Upload } from 'lucide-react';
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Plus, Trash2, Upload, CalendarIcon } from 'lucide-react';
 import { ReportData } from '@/pages/Index';
+import { format } from "date-fns";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 interface ReportFormProps {
   reportData: ReportData;
@@ -13,8 +17,23 @@ interface ReportFormProps {
 }
 
 const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+
   const updateField = (field: keyof ReportData, value: any) => {
     setReportData({ ...reportData, [field]: value });
+  };
+
+  const handleDateSelect = (date: Date | undefined) => {
+    if (date) {
+      setSelectedDate(date);
+      const formattedDate = date.toLocaleDateString('id-ID', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+      updateField('period', formattedDate);
+    }
   };
 
   const addItem = () => {
@@ -74,49 +93,72 @@ const ReportForm = ({ reportData, setReportData }: ReportFormProps) => {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="title" className="text-blue-900 font-semibold">Judul Laporan</Label>
-            <Input
-              id="title"
-              value={reportData.title}
-              onChange={(e) => updateField('title', e.target.value)}
-              className="mt-1"
-            />
-          </div>
-          
-          <div>
-            <Label htmlFor="company" className="text-blue-900 font-semibold">Nama Perusahaan</Label>
-            <Input
-              id="company"
-              value={reportData.company}
-              onChange={(e) => updateField('company', e.target.value)}
-              className="mt-1"
-            />
-          </div>
+      <div className="space-y-4">
+        <div>
+          <Label htmlFor="title" className="text-blue-900 font-semibold">Judul Laporan</Label>
+          <Input
+            id="title"
+            value={reportData.title}
+            onChange={(e) => updateField('title', e.target.value)}
+            className="mt-1"
+          />
+        </div>
+        
+        <div>
+          <Label htmlFor="company" className="text-blue-900 font-semibold">Nama Perusahaan</Label>
+          <Input
+            id="company"
+            value={reportData.company}
+            onChange={(e) => updateField('company', e.target.value)}
+            className="mt-1"
+          />
         </div>
 
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="address" className="text-blue-900 font-semibold">Alamat</Label>
-            <Input
-              id="address"
-              value={reportData.address}
-              onChange={(e) => updateField('address', e.target.value)}
-              className="mt-1"
-            />
-          </div>
-          
-          <div>
-            <Label htmlFor="employee" className="text-blue-900 font-semibold">Nama Karyawan</Label>
-            <Input
-              id="employee"
-              value={reportData.employee}
-              onChange={(e) => updateField('employee', e.target.value)}
-              className="mt-1"
-            />
-          </div>
+        <div>
+          <Label htmlFor="address" className="text-blue-900 font-semibold">Alamat</Label>
+          <Input
+            id="address"
+            value={reportData.address}
+            onChange={(e) => updateField('address', e.target.value)}
+            className="mt-1"
+          />
+        </div>
+        
+        <div>
+          <Label className="text-blue-900 font-semibold">Periode</Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-full justify-start text-left font-normal mt-1",
+                  !selectedDate && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {selectedDate ? format(selectedDate, "PPP") : <span>Pilih tanggal</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={handleDateSelect}
+                initialFocus
+                className={cn("p-3 pointer-events-auto")}
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+        
+        <div>
+          <Label htmlFor="employee" className="text-blue-900 font-semibold">Nama Karyawan</Label>
+          <Input
+            id="employee"
+            value={reportData.employee}
+            onChange={(e) => updateField('employee', e.target.value)}
+            className="mt-1"
+          />
         </div>
       </div>
 
