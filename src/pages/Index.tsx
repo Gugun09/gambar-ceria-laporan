@@ -49,79 +49,90 @@ const Index = () => {
 
   const [isDownloading, setIsDownloading] = useState(false);
 
-  // Ultra-optimized download function for minimal file size
+  // Robust download function with multiple fallbacks
   const downloadAsPNG = async () => {
     setIsDownloading(true);
+    
     try {
-      toast.info("🔄 Memproses laporan PNG...", {
-        description: "Mengoptimalkan ukuran file untuk hasil minimal."
+      toast.info("🔄 Memproses laporan...", {
+        description: "Menyiapkan konten untuk download."
       });
 
-      // Create ultra-compact download container
-      const downloadContainer = document.createElement('div');
-      downloadContainer.style.cssText = `
-        position: fixed;
-        top: -20000px;
-        left: -20000px;
-        width: 794px;
-        background: white;
-        font-family: Arial, sans-serif;
-        overflow: visible;
-        z-index: -1;
-        box-sizing: border-box;
-      `;
+      // Method 1: Try using existing preview element first
+      const existingElement = document.getElementById('report-preview');
+      if (existingElement) {
+        try {
+          const canvas = await html2canvas(existingElement, {
+            scale: 1.5,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#ffffff',
+            logging: false,
+            width: 794,
+            height: Math.max(1123, existingElement.scrollHeight),
+            scrollX: 0,
+            scrollY: 0,
+            windowWidth: 794,
+            windowHeight: Math.max(1123, existingElement.scrollHeight),
+            imageTimeout: 5000,
+            removeContainer: false,
+            foreignObjectRendering: false
+          });
 
-      // Create ultra-compact report content
-      const reportContent = createCompactContent(reportData);
-      downloadContainer.innerHTML = reportContent;
-      
-      document.body.appendChild(downloadContainer);
+          if (canvas && canvas.width > 0 && canvas.height > 0) {
+            const dataUrl = canvas.toDataURL('image/png', 0.9);
+            
+            // Verify the canvas is not blank
+            if (dataUrl && dataUrl.length > 1000) {
+              downloadImage(dataUrl, 'existing-element');
+              return;
+            }
+          }
+        } catch (error) {
+          console.warn('Method 1 failed, trying method 2:', error);
+        }
+      }
 
-      // Wait for images and calculate minimal height
-      await waitForImages(downloadContainer);
-      
-      // Calculate minimal content height
-      const contentHeight = calculateMinimalHeight(downloadContainer);
-      downloadContainer.style.height = `${contentHeight}px`;
-
-      // Small delay for rendering
-      await new Promise(resolve => setTimeout(resolve, 300));
-
-      toast.info("📸 Menggenerate PNG ultra-compact...", {
-        description: "Membuat file dengan ukuran minimal."
+      // Method 2: Create dedicated download element
+      toast.info("📋 Membuat konten download...", {
+        description: "Menggunakan metode alternatif."
       });
 
-      // Generate canvas with ultra-optimized settings
-      const canvas = await html2canvas(downloadContainer, {
-        width: 794,
-        height: contentHeight,
-        scale: 1.2, // Further reduced scale for smaller file
+      const downloadElement = createDownloadElement();
+      document.body.appendChild(downloadElement);
+
+      // Wait for rendering and images
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      await waitForAllImages(downloadElement);
+
+      const canvas = await html2canvas(downloadElement, {
+        scale: 1.5,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
+        logging: false,
+        width: 794,
+        height: downloadElement.scrollHeight,
         scrollX: 0,
         scrollY: 0,
         windowWidth: 794,
-        windowHeight: contentHeight,
-        logging: false,
+        windowHeight: downloadElement.scrollHeight,
+        imageTimeout: 5000,
         removeContainer: false,
-        foreignObjectRendering: true,
-        imageTimeout: 2000, // Further reduced timeout
-        onclone: (clonedDoc, element) => {
-          // Optimize cloned document
+        foreignObjectRendering: false,
+        onclone: (clonedDoc) => {
+          // Ensure all styles are applied
           const style = clonedDoc.createElement('style');
           style.textContent = `
             * {
+              box-sizing: border-box !important;
               -webkit-print-color-adjust: exact !important;
               print-color-adjust: exact !important;
-              color-adjust: exact !important;
-              box-sizing: border-box !important;
             }
             body {
               margin: 0 !important;
               padding: 0 !important;
-              width: 794px !important;
-              overflow: visible !important;
+              font-family: Arial, sans-serif !important;
             }
             img {
               max-width: 100% !important;
@@ -136,54 +147,171 @@ const Index = () => {
         }
       });
 
-      // Clean up
-      document.body.removeChild(downloadContainer);
+      document.body.removeChild(downloadElement);
 
-      // Convert to highly compressed PNG
-      const optimizedDataUrl = canvas.toDataURL('image/png', 0.8); // Higher compression
-      
-      // Download the image
-      const link = document.createElement('a');
-      link.download = `laporan-${reportData.employee || 'collection'}-${new Date().toISOString().split('T')[0]}.png`;
-      link.href = optimizedDataUrl;
-      
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      if (canvas && canvas.width > 0 && canvas.height > 0) {
+        const dataUrl = canvas.toDataURL('image/png', 0.9);
+        
+        if (dataUrl && dataUrl.length > 1000) {
+          downloadImage(dataUrl, 'dedicated-element');
+          return;
+        }
+      }
 
-      // Calculate file size for user info
-      const fileSizeKB = Math.round((optimizedDataUrl.length * 0.75) / 1024);
-
-      toast.success("✅ Download PNG berhasil!", {
-        description: `File ultra-compact berhasil didownload (${canvas.width}x${canvas.height}px, ~${fileSizeKB}KB).`
+      // Method 3: Fallback to simple HTML content
+      toast.info("🔄 Menggunakan metode fallback...", {
+        description: "Mencoba pendekatan sederhana."
       });
+
+      const simpleElement = createSimpleDownloadElement();
+      document.body.appendChild(simpleElement);
+
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      const simpleCanvas = await html2canvas(simpleElement, {
+        scale: 1,
+        backgroundColor: '#ffffff',
+        logging: false,
+        useCORS: false,
+        allowTaint: false
+      });
+
+      document.body.removeChild(simpleElement);
+
+      if (simpleCanvas && simpleCanvas.width > 0 && simpleCanvas.height > 0) {
+        const dataUrl = simpleCanvas.toDataURL('image/png', 0.9);
+        downloadImage(dataUrl, 'simple-fallback');
+        return;
+      }
+
+      throw new Error('All download methods failed');
+
     } catch (error) {
-      console.error('Error generating PNG:', error);
-      toast.error("❌ Download PNG gagal!", {
-        description: "Terjadi kesalahan saat menggenerate laporan PNG. Silakan coba lagi."
+      console.error('Download error:', error);
+      toast.error("❌ Download gagal!", {
+        description: "Terjadi kesalahan. Silakan coba refresh halaman dan coba lagi."
       });
     } finally {
       setIsDownloading(false);
     }
   };
 
-  // Calculate minimal height based on content
-  const calculateMinimalHeight = (container: HTMLElement): number => {
-    const baseHeight = 400; // Reduced header + basic content
-    const itemHeight = 200; // Reduced height per item row
-    const summaryHeight = 120; // Reduced summary section height
-    const footerHeight = 60; // Reduced footer height
-    const padding = 60; // Reduced top and bottom padding
+  // Helper function to download image
+  const downloadImage = (dataUrl: string, method: string) => {
+    const link = document.createElement('a');
+    link.download = `laporan-${reportData.employee || 'collection'}-${new Date().toISOString().split('T')[0]}.png`;
+    link.href = dataUrl;
     
-    const itemCount = reportData.items.length || 1; // At least 1 row for "no items"
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    const fileSizeKB = Math.round((dataUrl.length * 0.75) / 1024);
     
-    return baseHeight + (itemCount * itemHeight) + summaryHeight + footerHeight + padding;
+    toast.success("✅ Download berhasil!", {
+      description: `File PNG berhasil didownload (~${fileSizeKB}KB) menggunakan ${method}.`
+    });
   };
 
-  // Create ultra-compact content for download
-  const createCompactContent = (data: ReportData) => {
-    const itemsHtml = data.items.length > 0 
-      ? data.items.map((item, index) => `
+  // Create dedicated download element
+  const createDownloadElement = (): HTMLElement => {
+    const element = document.createElement('div');
+    element.style.cssText = `
+      position: fixed;
+      top: -10000px;
+      left: -10000px;
+      width: 794px;
+      background: white;
+      font-family: Arial, sans-serif;
+      z-index: -1;
+      padding: 30px;
+      box-sizing: border-box;
+    `;
+
+    element.innerHTML = generateReportHTML();
+    return element;
+  };
+
+  // Create simple fallback element
+  const createSimpleDownloadElement = (): HTMLElement => {
+    const element = document.createElement('div');
+    element.style.cssText = `
+      position: fixed;
+      top: -10000px;
+      left: -10000px;
+      width: 794px;
+      background: white;
+      font-family: Arial, sans-serif;
+      z-index: -1;
+      padding: 30px;
+      box-sizing: border-box;
+    `;
+
+    // Simple HTML without complex styling
+    element.innerHTML = `
+      <div style="text-align: center; margin-bottom: 20px; border-bottom: 3px solid #2563eb; padding-bottom: 15px;">
+        <h1 style="font-size: 18px; font-weight: bold; color: #1e3a8a; margin: 0 0 12px 0;">
+          ${reportData.title}
+        </h1>
+        <p style="color: #1d4ed8; font-size: 12px; margin: 2px 0;">${reportData.address}</p>
+        <p style="color: #1d4ed8; font-size: 12px; margin: 2px 0;">${reportData.company}</p>
+      </div>
+
+      <div style="margin-bottom: 20px; font-size: 10px;">
+        <p><strong>Periode:</strong> ${reportData.period}</p>
+        <p><strong>Karyawan:</strong> ${reportData.employee}</p>
+      </div>
+
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+        <thead>
+          <tr style="background: #2563eb; color: white;">
+            <th style="border: 1px solid #ccc; padding: 10px; font-size: 12px;">Jumlah Cash Pick Up (NOA)</th>
+            <th style="border: 1px solid #ccc; padding: 10px; font-size: 12px;">Foto (Struk Terakhir)</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${reportData.items.length > 0 ? reportData.items.map(item => `
+            <tr>
+              <td style="border: 1px solid #ccc; padding: 10px; text-align: center; font-size: 24px; font-weight: bold; color: #2563eb;">
+                ${item.quantity || '-'}
+              </td>
+              <td style="border: 1px solid #ccc; padding: 10px; text-align: center;">
+                ${item.image ? `<div style="width: 100px; height: 80px; background: #f0f0f0; margin: 0 auto;">Image</div>` : 'No Image'}
+              </td>
+            </tr>
+          `).join('') : `
+            <tr>
+              <td style="border: 1px solid #ccc; padding: 10px; text-align: center; font-size: 24px; font-weight: bold; color: #2563eb;">-</td>
+              <td style="border: 1px solid #ccc; padding: 10px; text-align: center;">No Image</td>
+            </tr>
+          `}
+          <tr style="background: #2563eb; color: white;">
+            <td style="border: 1px solid #ccc; padding: 8px; font-size: 10px;">Pembukaan Tabungan (NOA)</td>
+            <td style="border: 1px solid #ccc; padding: 8px; text-align: center; font-size: 12px;">${reportData.summary.total || '-'}</td>
+          </tr>
+          <tr style="background: #2563eb; color: white;">
+            <td style="border: 1px solid #ccc; padding: 8px; font-size: 10px;">Pembukaan Deposit (NOA)</td>
+            <td style="border: 1px solid #ccc; padding: 8px; text-align: center; font-size: 12px;">${reportData.summary.deposits || '-'}</td>
+          </tr>
+          <tr style="background: #2563eb; color: white;">
+            <td style="border: 1px solid #ccc; padding: 8px; font-size: 10px;">Rekomendasi Kredit</td>
+            <td style="border: 1px solid #ccc; padding: 8px; text-align: center; font-size: 12px;">${reportData.summary.recommendations || '-'}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="text-align: center; font-size: 9px; color: #666; margin-top: 20px;">
+        <p>Laporan dibuat pada: ${new Date().toLocaleString('id-ID')}</p>
+      </div>
+    `;
+
+    return element;
+  };
+
+  // Generate complete report HTML
+  const generateReportHTML = (): string => {
+    const itemsHTML = reportData.items.length > 0 
+      ? reportData.items.map((item, index) => `
           <tr style="border-bottom: 1px solid #d1d5db;">
             <td style="border-right: 1px solid #d1d5db; padding: 12px; text-align: center; background: white; vertical-align: middle;">
               <div style="font-size: 36px; font-weight: bold; color: #2563eb; margin-bottom: 4px; line-height: 1;">
@@ -192,13 +320,12 @@ const Index = () => {
             </td>
             <td style="padding: 12px; text-align: center; background: white; vertical-align: middle;">
               ${item.image ? `
-                <div style="display: flex; justify-content: center; align-items: center;">
-                  <img
-                    src="${item.image}"
-                    alt="Item ${index + 1}"
-                    style="max-width: 100%; max-height: 100px; object-fit: contain; border-radius: 4px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); border: 1px solid #d1d5db;"
-                  />
-                </div>
+                <img
+                  src="${item.image}"
+                  alt="Item ${index + 1}"
+                  style="max-width: 100%; max-height: 100px; object-fit: contain; border-radius: 4px; border: 1px solid #d1d5db;"
+                  crossorigin="anonymous"
+                />
               ` : `
                 <div style="width: 100%; height: 100px; background: #f3f4f6; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 10px; border: 1px solid #d1d5db;">
                   No Image
@@ -213,7 +340,7 @@ const Index = () => {
               <div style="font-size: 36px; font-weight: bold; color: #2563eb; margin-bottom: 4px; line-height: 1;">-</div>
               <div style="font-size: 10px; color: #6b7280;">No items</div>
             </td>
-            <td style="padding: 12px; text-center; background: white; vertical-align: middle;">
+            <td style="padding: 12px; text-align: center; background: white; vertical-align: middle;">
               <div style="width: 100%; height: 100px; background: #f3f4f6; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 10px; border: 1px solid #d1d5db;">
                 No Image
               </div>
@@ -222,82 +349,77 @@ const Index = () => {
         `;
 
     return `
-      <div style="width: 794px; background: white; padding: 30px; box-sizing: border-box; font-family: Arial, sans-serif; overflow: visible;">
+      <div style="width: 794px; background: white; font-family: Arial, sans-serif; overflow: visible;">
         
-        <!-- Header Section - Ultra Compact -->
-        <div style="text-center; margin-bottom: 20px; border-bottom: 3px solid #2563eb; padding-bottom: 15px;">
+        <!-- Header -->
+        <div style="text-align: center; margin-bottom: 20px; border-bottom: 3px solid #2563eb; padding-bottom: 15px;">
           <h1 style="font-size: 18px; font-weight: bold; color: #1e3a8a; margin-bottom: 12px; line-height: 1.2; margin-top: 0;">
-            ${data.title}
+            ${reportData.title}
           </h1>
           <div style="color: #1d4ed8; line-height: 1.3;">
-            <p style="font-weight: 600; font-size: 12px; margin: 2px 0;">${data.address}</p>
-            <p style="font-weight: 600; font-size: 12px; margin: 2px 0;">${data.company}</p>
+            <p style="font-weight: 600; font-size: 12px; margin: 2px 0;">${reportData.address}</p>
+            <p style="font-weight: 600; font-size: 12px; margin: 2px 0;">${reportData.company}</p>
           </div>
         </div>
 
-        <!-- Report Info Section - Compact -->
+        <!-- Report Info -->
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; font-size: 10px;">
           <div>
             <div style="margin-bottom: 2px; font-weight: 600; color: #1e3a8a;">Periode :</div>
-            <div>${data.period}</div>
+            <div>${reportData.period}</div>
           </div>
           <div>
             <div style="margin-bottom: 2px; font-weight: 600; color: #1e3a8a;">Karyawan :</div>
-            <div>${data.employee}</div>
+            <div>${reportData.employee}</div>
           </div>
         </div>
 
-        <!-- Main Table Section - Ultra Compact -->
+        <!-- Main Table -->
         <div style="margin-bottom: 20px;">
-          <div style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); border-radius: 6px; overflow: hidden; border: 1px solid #d1d5db;">
-            <table style="width: 100%; border-collapse: collapse;">
-              <!-- Table Header -->
-              <thead>
-                <tr style="background: #2563eb; color: white;">
-                  <th style="border-right: 1px solid #6b7280; padding: 10px; text-align: center; font-weight: 600; font-size: 12px;">
-                    Jumlah Cash Pick Up (NOA)
-                  </th>
-                  <th style="padding: 10px; text-align: center; font-weight: 600; font-size: 12px;">
-                    Foto (Struk Terakhir)
-                  </th>
-                </tr>
-              </thead>
+          <table style="width: 100%; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); border-radius: 6px; overflow: hidden; border: 1px solid #d1d5db;">
+            <thead>
+              <tr style="background: #2563eb; color: white;">
+                <th style="border-right: 1px solid #6b7280; padding: 10px; text-align: center; font-weight: 600; font-size: 12px;">
+                  Jumlah Cash Pick Up (NOA)
+                </th>
+                <th style="padding: 10px; text-align: center; font-weight: 600; font-size: 12px;">
+                  Foto (Struk Terakhir)
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              ${itemsHTML}
               
-              <!-- Table Body -->
-              <tbody>
-                ${itemsHtml}
-                
-                <!-- Summary Rows - Compact -->
-                <tr style="background: #2563eb; color: white; border-top: 1px solid #6b7280;">
-                  <td style="border-right: 1px solid #6b7280; padding: 8px; font-weight: 600; text-align: left; font-size: 10px;">
-                    Pembukaan Tabungan (NOA)
-                  </td>
-                  <td style="padding: 8px; text-align: center; font-weight: bold; font-size: 12px;">
-                    ${data.summary.total || '-'}
-                  </td>
-                </tr>
-                <tr style="background: #2563eb; color: white; border-top: 1px solid #6b7280;">
-                  <td style="border-right: 1px solid #6b7280; padding: 8px; font-weight: 600; text-align: left; font-size: 10px;">
-                    Pembukaan Deposit (NOA)
-                  </td>
-                  <td style="padding: 8px; text-align: center; font-weight: bold; font-size: 12px;">
-                    ${data.summary.deposits || '-'}
-                  </td>
-                </tr>
-                <tr style="background: #2563eb; color: white; border-top: 1px solid #6b7280;">
-                  <td style="border-right: 1px solid #6b7280; padding: 8px; font-weight: 600; text-align: left; font-size: 10px;">
-                    Rekomendasi Kredit
-                  </td>
-                  <td style="padding: 8px; text-align: center; font-weight: bold; font-size: 12px;">
-                    ${data.summary.recommendations || '-'}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+              <!-- Summary -->
+              <tr style="background: #2563eb; color: white; border-top: 1px solid #6b7280;">
+                <td style="border-right: 1px solid #6b7280; padding: 8px; font-weight: 600; text-align: left; font-size: 10px;">
+                  Pembukaan Tabungan (NOA)
+                </td>
+                <td style="padding: 8px; text-align: center; font-weight: bold; font-size: 12px;">
+                  ${reportData.summary.total || '-'}
+                </td>
+              </tr>
+              <tr style="background: #2563eb; color: white; border-top: 1px solid #6b7280;">
+                <td style="border-right: 1px solid #6b7280; padding: 8px; font-weight: 600; text-align: left; font-size: 10px;">
+                  Pembukaan Deposit (NOA)
+                </td>
+                <td style="padding: 8px; text-align: center; font-weight: bold; font-size: 12px;">
+                  ${reportData.summary.deposits || '-'}
+                </td>
+              </tr>
+              <tr style="background: #2563eb; color: white; border-top: 1px solid #6b7280;">
+                <td style="border-right: 1px solid #6b7280; padding: 8px; font-weight: 600; text-align: left; font-size: 10px;">
+                  Rekomendasi Kredit
+                </td>
+                <td style="padding: 8px; text-align: center; font-weight: bold; font-size: 12px;">
+                  ${reportData.summary.recommendations || '-'}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
-        <!-- Footer Section - Minimal -->
+        <!-- Footer -->
         <div style="margin-top: 20px; text-align: center; font-size: 9px; color: #6b7280;">
           <p style="margin: 0;">Laporan dibuat pada: ${new Date().toLocaleString('id-ID')}</p>
         </div>
@@ -306,8 +428,8 @@ const Index = () => {
     `;
   };
 
-  // Optimized image loading function
-  const waitForImages = (container: HTMLElement): Promise<void> => {
+  // Wait for all images to load
+  const waitForAllImages = (container: HTMLElement): Promise<void> => {
     const images = container.querySelectorAll('img');
     const promises = Array.from(images).map(img => {
       if (img.complete && img.naturalHeight !== 0) {
@@ -315,10 +437,8 @@ const Index = () => {
       }
       
       return new Promise<void>((resolve) => {
-        const timeout = setTimeout(() => {
-          resolve();
-        }, 2000); // Further reduced timeout
-
+        const timeout = setTimeout(() => resolve(), 3000);
+        
         img.onload = () => {
           clearTimeout(timeout);
           resolve();
@@ -338,8 +458,6 @@ const Index = () => {
   const downloadViaPrint = () => {
     const printWindow = window.open('', '_blank');
     if (printWindow) {
-      const reportContent = createCompactContent(reportData);
-      
       printWindow.document.write(`
         <!DOCTYPE html>
         <html>
@@ -352,7 +470,7 @@ const Index = () => {
               }
               body { 
                 margin: 0; 
-                padding: 0;
+                padding: 30px;
                 font-family: Arial, sans-serif; 
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
@@ -369,7 +487,7 @@ const Index = () => {
             </style>
           </head>
           <body>
-            ${reportContent}
+            ${generateReportHTML()}
           </body>
         </html>
       `);
@@ -397,22 +515,22 @@ const Index = () => {
           </h1>
           
           <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-8">
-            Platform modern untuk membuat, melihat preview, dan mendownload laporan profesional dalam format PNG ultra-compact
+            Platform modern untuk membuat, melihat preview, dan mendownload laporan profesional dalam format PNG
           </p>
 
           {/* Feature Pills */}
           <div className="flex flex-wrap justify-center gap-4">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border border-slate-200">
               <Zap className="w-4 h-4 text-blue-600" />
-              <span className="text-sm font-medium text-slate-700">Ultra Compact</span>
+              <span className="text-sm font-medium text-slate-700">Download Robust</span>
             </div>
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border border-slate-200">
               <Shield className="w-4 h-4 text-green-600" />
-              <span className="text-sm font-medium text-slate-700">File Kecil</span>
+              <span className="text-sm font-medium text-slate-700">Multi-Method</span>
             </div>
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border border-slate-200">
               <CheckCircle2 className="w-4 h-4 text-purple-600" />
-              <span className="text-sm font-medium text-slate-700">Responsif</span>
+              <span className="text-sm font-medium text-slate-700">Fallback System</span>
             </div>
           </div>
         </div>
@@ -459,7 +577,7 @@ const Index = () => {
                 <h2 className="text-3xl font-bold text-slate-900 mb-2">
                   Preview Laporan
                 </h2>
-                <p className="text-slate-600">Download dengan ukuran ultra-compact - file sangat kecil</p>
+                <p className="text-slate-600">Download dengan sistem robust - multiple fallback methods</p>
               </div>
               
               {/* Download Options */}
@@ -496,14 +614,16 @@ const Index = () => {
             </div>
 
             {/* Info Alert */}
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <div className="flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                <CheckCircle2 className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                 <div>
-                  <h4 className="font-semibold text-green-900 mb-1">File Ultra-Compact</h4>
-                  <p className="text-green-700 text-sm">
-                    Sistem telah dioptimalkan untuk menghasilkan file PNG dengan ukuran sangat kecil (100-400KB) 
-                    dengan mengurangi ukuran text, padding, dan gambar namun tetap menjaga kualitas visual.
+                  <h4 className="font-semibold text-blue-900 mb-1">Sistem Download Robust</h4>
+                  <p className="text-blue-700 text-sm">
+                    Sistem menggunakan 3 metode download berbeda untuk memastikan file PNG berhasil didownload:
+                    <br />• Method 1: Direct preview capture
+                    <br />• Method 2: Dedicated download element  
+                    <br />• Method 3: Simple fallback system
                   </p>
                 </div>
               </div>
@@ -517,7 +637,7 @@ const Index = () => {
                     <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
                     <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                   </div>
-                  <span className="text-sm font-medium text-slate-600">Preview Mode - Ultra-compact untuk file kecil</span>
+                  <span className="text-sm font-medium text-slate-600">Preview Mode - Robust download system</span>
                 </div>
               </div>
               <div className="p-2 sm:p-4 lg:p-6">
