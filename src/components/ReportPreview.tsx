@@ -37,18 +37,16 @@ const ReportPreview = ({ reportData }: ReportPreviewProps) => {
             </div>
 
             {/* Report Info Section - Reduced Spacing */}
-            <div className="grid grid-cols-2 gap-6 mb-6 text-xs">
-              <div>
-                <div className="space-y-1">
-                  <div className="font-semibold text-blue-900">Periode :</div>
-                  <div>{reportData.period}</div>
-                </div>
+            <div style={{ marginBottom: 32, fontSize: 16 }}>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
+                <span style={{ fontWeight: 700, color: '#1e3a8a', minWidth: 120 }}>Periode</span>
+                <span style={{ margin: '0 12px', fontWeight: 700 }}>:</span>
+                <span>{reportData.period}</span>
               </div>
-              <div>
-                <div className="space-y-1">
-                  <div className="font-semibold text-blue-900">Karyawan :</div>
-                  <div>{reportData.employee}</div>
-                </div>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
+                <span style={{ fontWeight: 700, color: '#1e3a8a', minWidth: 120 }}>Karyawan</span>
+                <span style={{ margin: '0 12px', fontWeight: 700 }}>:</span>
+                <span>{reportData.employee}</span>
               </div>
             </div>
 
