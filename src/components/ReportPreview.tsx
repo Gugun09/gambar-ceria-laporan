@@ -1,4 +1,3 @@
-
 import { ReportData } from '@/pages/Index';
 
 interface ReportPreviewProps {
@@ -22,17 +21,15 @@ const ReportPreview = ({ reportData }: ReportPreviewProps) => {
       {/* Report Info */}
       <div className="grid grid-cols-2 gap-8 mb-8 text-sm">
         <div>
-          <div className="flex">
-            <span className="font-semibold text-blue-900 w-20">Periode</span>
-            <span className="mr-2">:</span>
-            <span>{reportData.period}</span>
+          <div className="space-y-1">
+            <div className="font-semibold text-blue-900">Periode :</div>
+            <div>{reportData.period}</div>
           </div>
         </div>
         <div>
-          <div className="flex">
-            <span className="font-semibold text-blue-900 w-20">Karyawan</span>
-            <span className="mr-2">:</span>
-            <span>{reportData.employee}</span>
+          <div className="space-y-1">
+            <div className="font-semibold text-blue-900">Karyawan :</div>
+            <div>{reportData.employee}</div>
           </div>
         </div>
       </div>
