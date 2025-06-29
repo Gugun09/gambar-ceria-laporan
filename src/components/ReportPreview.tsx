@@ -22,145 +22,145 @@ const ReportPreview = ({ reportData }: ReportPreviewProps) => {
             aspectRatio: '794/1123'
           }}
         >
-          {/* Content Container with Reduced Padding */}
-          <div className="w-full h-full" style={{ padding: '30px' }}>
+          {/* Content Container with A4 Standard Padding */}
+          <div className="w-full h-full" style={{ padding: '40px 60px' }}>
             
-            {/* Header Section - Reduced Sizes */}
-            <div className="text-center mb-6 border-b-3 border-blue-600 pb-4">
-              <h1 className="text-xl font-bold text-blue-900 mb-3 leading-tight">
-                {reportData.title}
-              </h1>
-              <div className="text-blue-700 space-y-1">
-                <p className="font-semibold text-sm">{reportData.address}</p>
-                <p className="font-semibold text-sm">{reportData.company}</p>
+            {/* Header Section - MATCHING REFERENCE */}
+            <div className="text-center mb-8">
+              {/* Blue Header Bar */}
+              <div className="bg-blue-700 text-white py-4 px-6 mb-6 rounded-lg">
+                <h1 className="text-2xl font-bold leading-tight">
+                  {reportData.title}
+                </h1>
               </div>
+              
+              {/* Company Info */}
+              <div className="text-gray-700 space-y-1 mb-6">
+                <p className="font-medium text-base">{reportData.address}</p>
+                <p className="font-medium text-base">{reportData.company}</p>
+              </div>
+              
+              {/* Horizontal Line */}
+              <div className="border-b-2 border-gray-400 mb-6"></div>
             </div>
 
-            {/* Report Info Section - Using Requested Format */}
-            <div style={{ marginBottom: 32, fontSize: 16 }}>
-              <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
-                <span style={{ fontWeight: 700, color: '#1e3a8a', minWidth: 120 }}>Periode</span>
-                <span style={{ margin: '0 12px', fontWeight: 700 }}>:</span>
+            {/* Report Info Section - MATCHING REFERENCE FORMAT */}
+            <div className="mb-8 text-base">
+              <div className="flex items-center mb-3">
+                <span className="font-bold text-blue-700 min-w-24">Periode</span>
+                <span className="mx-3 font-bold">:</span>
                 <span>{reportData.period}</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
-                <span style={{ fontWeight: 700, color: '#1e3a8a', minWidth: 120 }}>Karyawan</span>
-                <span style={{ margin: '0 12px', fontWeight: 700 }}>:</span>
+              <div className="flex items-center mb-6">
+                <span className="font-bold text-blue-700 min-w-24">Karyawan</span>
+                <span className="mx-3 font-bold">:</span>
                 <span>{reportData.employee}</span>
               </div>
             </div>
 
-            {/* Main Table Section - Perfect Center Alignment */}
+            {/* Main Table Section - EXACTLY MATCHING REFERENCE */}
             <div className="mb-6">
-              <div className="shadow-lg rounded-lg overflow-hidden border border-gray-300">
-                <table className="w-full border-collapse">
-                  {/* Table Header - Perfect Center */}
-                  <thead>
-                    <tr className="bg-blue-600 text-white">
-                      <th className="border-r border-gray-400 p-3 text-center font-semibold text-sm align-middle">
-                        Jumlah Cash Pick Up (NOA)
-                      </th>
-                      <th className="p-3 text-center font-semibold text-sm align-middle">
-                        Foto (Struk Terakhir)
-                      </th>
-                    </tr>
-                  </thead>
-                  
-                  {/* Table Body - Perfect Center Alignment */}
-                  <tbody>
-                    {reportData.items.length > 0 ? (
-                      reportData.items.map((item, index) => (
-                        <tr key={item.id} className="border-b border-gray-300">
-                          {/* Quantity Column - Perfect Vertical & Horizontal Center */}
-                          <td className="border-r border-gray-300 p-4 text-center bg-white align-middle">
-                            <div className="flex flex-col items-center justify-center h-full">
-                              <div className="text-4xl font-bold text-blue-600 leading-none">
-                                {item.quantity || '-'}
-                              </div>
+              <table className="w-full border-collapse border-2 border-gray-800">
+                {/* Table Header - MATCHING REFERENCE COLORS */}
+                <thead>
+                  <tr className="bg-blue-700 text-white">
+                    <th className="border border-gray-800 py-4 px-4 text-center font-bold text-base">
+                      Jumlah Cash Pick Up (NOA)
+                    </th>
+                    <th className="border border-gray-800 py-4 px-4 text-center font-bold text-base">
+                      Foto (Struk Terakhir)
+                    </th>
+                  </tr>
+                </thead>
+                
+                {/* Table Body - MATCHING REFERENCE LAYOUT */}
+                <tbody>
+                  {reportData.items.length > 0 ? (
+                    reportData.items.map((item, index) => (
+                      <tr key={item.id} className="border border-gray-800">
+                        {/* Quantity Column - LARGE BLUE NUMBERS LIKE REFERENCE */}
+                        <td className="border border-gray-800 text-center bg-white" style={{ height: '200px', verticalAlign: 'middle' }}>
+                          <div className="flex items-center justify-center h-full">
+                            <div className="text-8xl font-bold text-blue-700 leading-none">
+                              {item.quantity || '0'}
                             </div>
-                          </td>
-                          {/* Image Column - Perfect Center */}
-                          <td className="p-4 text-center bg-white align-middle">
-                            <div className="flex items-center justify-center h-full">
-                              {item.image ? (
-                                <img
-                                  src={item.image}
-                                  alt={`Item ${index + 1}`}
-                                  className="max-w-full h-32 object-contain rounded-lg shadow-md border border-gray-200"
-                                  style={{ maxHeight: '128px' }}
-                                />
-                              ) : (
-                                <div 
-                                  className="w-full bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs shadow-inner border border-gray-200"
-                                  style={{ height: '128px', minWidth: '200px' }}
-                                >
-                                  No Image
-                                </div>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr className="border-b border-gray-300">
-                        <td className="border-r border-gray-300 p-4 text-center bg-white align-middle">
-                          <div className="flex flex-col items-center justify-center h-full">
-                            <div className="text-4xl font-bold text-blue-600 leading-none">-</div>
-                            <div className="text-xs text-gray-600 mt-1">No items</div>
                           </div>
                         </td>
-                        <td className="p-4 text-center bg-white align-middle">
-                          <div className="flex items-center justify-center h-full">
-                            <div 
-                              className="w-full bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs shadow-inner border border-gray-200"
-                              style={{ height: '128px', minWidth: '200px' }}
-                            >
-                              No Image
-                            </div>
+                        {/* Image Column - MATCHING REFERENCE SIZE */}
+                        <td className="border border-gray-800 text-center bg-white" style={{ height: '200px', verticalAlign: 'middle' }}>
+                          <div className="flex items-center justify-center h-full p-4">
+                            {item.image ? (
+                              <img
+                                src={item.image}
+                                alt={`Item ${index + 1}`}
+                                className="max-w-full max-h-full object-contain"
+                                style={{ maxWidth: '180px', maxHeight: '160px' }}
+                              />
+                            ) : (
+                              <div 
+                                className="bg-gray-100 border border-gray-300 flex items-center justify-center text-gray-400 text-sm"
+                                style={{ width: '180px', height: '160px' }}
+                              >
+                                No Image
+                              </div>
+                            )}
                           </div>
                         </td>
                       </tr>
-                    )}
-                    
-                    {/* Summary Rows - Perfect Center Alignment */}
-                    <tr className="bg-blue-600 text-white border-t border-gray-400">
-                      <td className="border-r border-gray-400 p-3 font-semibold text-center text-xs align-middle">
-                        Pembukaan Tabungan (NOA)
-                      </td>
-                      <td className="p-3 text-center font-bold text-sm align-middle">
+                    ))
+                  ) : (
+                    <tr className="border border-gray-800">
+                      <td className="border border-gray-800 text-center bg-white" style={{ height: '200px', verticalAlign: 'middle' }}>
                         <div className="flex items-center justify-center h-full">
-                          {reportData.summary.total || '-'}
+                          <div className="text-8xl font-bold text-blue-700 leading-none">0</div>
+                        </div>
+                      </td>
+                      <td className="border border-gray-800 text-center bg-white" style={{ height: '200px', verticalAlign: 'middle' }}>
+                        <div className="flex items-center justify-center h-full p-4">
+                          <div 
+                            className="bg-gray-100 border border-gray-300 flex items-center justify-center text-gray-400 text-sm"
+                            style={{ width: '180px', height: '160px' }}
+                          >
+                            No Image
+                          </div>
                         </div>
                       </td>
                     </tr>
-                    <tr className="bg-blue-600 text-white border-t border-gray-400">
-                      <td className="border-r border-gray-400 p-3 font-semibold text-center text-xs align-middle">
-                        Pembukaan Deposit (NOA)
-                      </td>
-                      <td className="p-3 text-center font-bold text-sm align-middle">
-                        <div className="flex items-center justify-center h-full">
-                          {reportData.summary.deposits || '-'}
-                        </div>
-                      </td>
-                    </tr>
-                    <tr className="bg-blue-600 text-white border-t border-gray-400">
-                      <td className="border-r border-gray-400 p-3 font-semibold text-center text-xs align-middle">
-                        Rekomendasi Kredit
-                      </td>
-                      <td className="p-3 text-center font-bold text-sm align-middle">
-                        <div className="flex items-center justify-center h-full">
-                          {reportData.summary.recommendations || '-'}
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+                  )}
+                </tbody>
+              </table>
             </div>
 
-            {/* Footer Section - Smaller Text */}
-            <div className="mt-8 text-center text-xs text-gray-600">
-              <p>Laporan dibuat pada: {new Date().toLocaleString('id-ID')}</p>
+            {/* Summary Table - EXACTLY MATCHING REFERENCE */}
+            <div className="mt-8">
+              <table className="w-full border-collapse border-2 border-gray-800">
+                <tbody>
+                  <tr className="bg-blue-700 text-white border border-gray-800">
+                    <td className="border border-gray-800 py-4 px-4 font-bold text-center text-base">
+                      Pembukaan Tabungan (NOA)
+                    </td>
+                    <td className="border border-gray-800 py-4 px-4 text-center font-bold text-2xl">
+                      {reportData.summary.total || '1'}
+                    </td>
+                  </tr>
+                  <tr className="bg-blue-700 text-white border border-gray-800">
+                    <td className="border border-gray-800 py-4 px-4 font-bold text-center text-base">
+                      Pembukaan Deposit (NOA)
+                    </td>
+                    <td className="border border-gray-800 py-4 px-4 text-center font-bold text-2xl">
+                      {reportData.summary.deposits || '0'}
+                    </td>
+                  </tr>
+                  <tr className="bg-blue-700 text-white border border-gray-800">
+                    <td className="border border-gray-800 py-4 px-4 font-bold text-center text-base">
+                      Rekomendasi Kredit
+                    </td>
+                    <td className="border border-gray-800 py-4 px-4 text-center font-bold text-2xl">
+                      {reportData.summary.recommendations || '0'}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
             
           </div>

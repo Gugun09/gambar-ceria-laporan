@@ -73,7 +73,7 @@ const Index = () => {
     
     try {
       toast.info("🔄 Memproses laporan A4...", {
-        description: "Menyiapkan konten dengan padding standar 3:4."
+        description: "Menyiapkan konten dengan format yang sesuai referensi."
       });
 
       // Create A4 standard element
@@ -130,7 +130,7 @@ const Index = () => {
             .a4-container {
               width: ${A4_CONFIG.width}px !important;
               height: ${A4_CONFIG.height}px !important;
-              padding: ${A4_CONFIG.padding.top}px ${A4_CONFIG.padding.right}px ${A4_CONFIG.padding.bottom}px ${A4_CONFIG.padding.left}px !important;
+              padding: 40px 60px !important;
               background: white !important;
               overflow: hidden !important;
             }
@@ -175,11 +175,11 @@ const Index = () => {
     const fileSizeKB = Math.round((dataUrl.length * 0.75) / 1024);
     
     toast.success("✅ Download A4 berhasil!", {
-      description: `File PNG A4 berhasil didownload (~${fileSizeKB}KB) dengan padding standar 3:4.`
+      description: `File PNG A4 berhasil didownload (~${fileSizeKB}KB) sesuai referensi.`
     });
   };
 
-  // Create A4 standard element with proper padding - MATCHING REFERENCE IMAGE
+  // Create A4 standard element with proper padding - MATCHING REFERENCE IMAGE EXACTLY
   const createA4StandardElement = (): HTMLElement => {
     const element = document.createElement('div');
     element.className = 'a4-container';
@@ -192,7 +192,7 @@ const Index = () => {
       background: white;
       font-family: Arial, sans-serif;
       z-index: -1;
-      padding: ${A4_CONFIG.padding.top}px ${A4_CONFIG.padding.right}px ${A4_CONFIG.padding.bottom}px ${A4_CONFIG.padding.left}px;
+      padding: 40px 60px;
       box-sizing: border-box;
       overflow: hidden;
     `;
@@ -205,25 +205,25 @@ const Index = () => {
   const generateA4ReportHTML = (): string => {
     const itemsHTML = reportData.items.length > 0 
       ? reportData.items.map((item, index) => `
-          <tr style="border: 1px solid #4a5568;">
-            <td style="border-right: 1px solid #4a5568; padding: 20px; text-align: center; background: white; vertical-align: middle; width: 50%; height: 200px;">
-              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
-                <div style="font-size: 72px; font-weight: bold; color: #2563eb; line-height: 1; font-family: Arial, sans-serif;">
-                  ${item.quantity || '-'}
+          <tr style="border: 2px solid #374151;">
+            <td style="border: 2px solid #374151; text-align: center; background: white; vertical-align: middle; width: 50%; height: 200px;">
+              <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
+                <div style="font-size: 96px; font-weight: bold; color: #1d4ed8; line-height: 1; font-family: Arial, sans-serif;">
+                  ${item.quantity || '0'}
                 </div>
               </div>
             </td>
-            <td style="padding: 20px; text-align: center; background: white; vertical-align: middle; width: 50%; height: 200px; border: 1px solid #4a5568;">
-              <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
+            <td style="border: 2px solid #374151; text-align: center; background: white; vertical-align: middle; width: 50%; height: 200px;">
+              <div style="display: flex; align-items: center; justify-content: center; height: 100%; padding: 16px;">
                 ${item.image ? `
                   <img
                     src="${item.image}"
                     alt="Item ${index + 1}"
-                    style="max-width: 180px; max-height: 160px; object-fit: contain; border-radius: 8px;"
+                    style="max-width: 180px; max-height: 160px; object-fit: contain;"
                     crossorigin="anonymous"
                   />
                 ` : `
-                  <div style="width: 180px; height: 160px; background: #f7fafc; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #a0aec0; font-size: 12px; border: 1px solid #e2e8f0;">
+                  <div style="width: 180px; height: 160px; background: #f3f4f6; border: 1px solid #d1d5db; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 14px;">
                     No Image
                   </div>
                 `}
@@ -232,15 +232,15 @@ const Index = () => {
           </tr>
         `).join('')
       : `
-          <tr style="border: 1px solid #4a5568;">
-            <td style="border-right: 1px solid #4a5568; padding: 20px; text-align: center; background: white; vertical-align: middle; height: 200px;">
-              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
-                <div style="font-size: 72px; font-weight: bold; color: #2563eb; line-height: 1; font-family: Arial, sans-serif;">-</div>
+          <tr style="border: 2px solid #374151;">
+            <td style="border: 2px solid #374151; text-align: center; background: white; vertical-align: middle; height: 200px;">
+              <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
+                <div style="font-size: 96px; font-weight: bold; color: #1d4ed8; line-height: 1; font-family: Arial, sans-serif;">0</div>
               </div>
             </td>
-            <td style="padding: 20px; text-align: center; background: white; vertical-align: middle; height: 200px; border: 1px solid #4a5568;">
-              <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
-                <div style="width: 180px; height: 160px; background: #f7fafc; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #a0aec0; font-size: 12px; border: 1px solid #e2e8f0;">
+            <td style="border: 2px solid #374151; text-align: center; background: white; vertical-align: middle; height: 200px;">
+              <div style="display: flex; align-items: center; justify-content: center; height: 100%; padding: 16px;">
+                <div style="width: 180px; height: 160px; background: #f3f4f6; border: 1px solid #d1d5db; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 14px;">
                   No Image
                 </div>
               </div>
@@ -251,76 +251,84 @@ const Index = () => {
     return `
       <div style="width: 100%; height: 100%; display: flex; flex-direction: column; font-family: Arial, sans-serif;">
         
-        <!-- Header - MATCHING REFERENCE -->
-        <div style="text-align: center; margin-bottom: 24px; border-bottom: 4px solid #2563eb; padding-bottom: 16px; flex-shrink: 0;">
-          <h1 style="font-size: 24px; font-weight: bold; color: #1e3a8a; margin-bottom: 12px; line-height: 1.2; margin-top: 0; font-family: Arial, sans-serif;">
-            ${reportData.title}
-          </h1>
-          <div style="color: #1d4ed8; line-height: 1.4; font-family: Arial, sans-serif;">
-            <p style="font-weight: 600; font-size: 14px; margin: 2px 0;">${reportData.address}</p>
-            <p style="font-weight: 600; font-size: 14px; margin: 2px 0;">${reportData.company}</p>
+        <!-- Header - EXACTLY MATCHING REFERENCE -->
+        <div style="text-align: center; margin-bottom: 32px;">
+          <!-- Blue Header Bar -->
+          <div style="background: #1d4ed8; color: white; padding: 16px 24px; margin-bottom: 24px; border-radius: 8px;">
+            <h1 style="font-size: 24px; font-weight: bold; margin: 0; line-height: 1.2; font-family: Arial, sans-serif;">
+              ${reportData.title}
+            </h1>
           </div>
+          
+          <!-- Company Info -->
+          <div style="color: #374151; margin-bottom: 24px; font-family: Arial, sans-serif;">
+            <p style="font-weight: 500; font-size: 16px; margin: 4px 0;">${reportData.address}</p>
+            <p style="font-weight: 500; font-size: 16px; margin: 4px 0;">${reportData.company}</p>
+          </div>
+          
+          <!-- Horizontal Line -->
+          <div style="border-bottom: 2px solid #6b7280; margin-bottom: 24px;"></div>
         </div>
 
         <!-- Report Info - MATCHING REFERENCE FORMAT -->
-        <div style="margin-bottom: 24px; font-size: 16px; flex-shrink: 0; font-family: Arial, sans-serif;">
-          <div style="display: flex; align-items: center; margin-bottom: 8px;">
-            <span style="font-weight: 700; color: #1e3a8a; min-width: 100px; font-family: Arial, sans-serif;">Periode</span>
+        <div style="margin-bottom: 32px; font-size: 16px; font-family: Arial, sans-serif;">
+          <div style="display: flex; align-items: center; margin-bottom: 12px;">
+            <span style="font-weight: 700; color: #1d4ed8; min-width: 96px; font-family: Arial, sans-serif;">Periode</span>
             <span style="margin: 0 12px; font-weight: 700; font-family: Arial, sans-serif;">:</span>
             <span style="font-family: Arial, sans-serif;">${reportData.period}</span>
           </div>
-          <div style="display: flex; align-items: center; margin-bottom: 8px;">
-            <span style="font-weight: 700; color: #1e3a8a; min-width: 100px; font-family: Arial, sans-serif;">Karyawan</span>
+          <div style="display: flex; align-items: center; margin-bottom: 24px;">
+            <span style="font-weight: 700; color: #1d4ed8; min-width: 96px; font-family: Arial, sans-serif;">Karyawan</span>
             <span style="margin: 0 12px; font-weight: 700; font-family: Arial, sans-serif;">:</span>
             <span style="font-family: Arial, sans-serif;">${reportData.employee}</span>
           </div>
         </div>
 
-        <!-- Main Table - MATCHING REFERENCE EXACTLY -->
-        <div style="flex: 1; display: flex; flex-direction: column;">
-          <table style="width: 100%; border-collapse: collapse; border: 2px solid #4a5568; flex: 1;">
+        <!-- Main Table - EXACTLY MATCHING REFERENCE -->
+        <div style="margin-bottom: 24px;">
+          <table style="width: 100%; border-collapse: collapse; border: 2px solid #374151;">
             <thead>
-              <tr style="background: #2563eb; color: white;">
-                <th style="border-right: 1px solid #4a5568; padding: 12px; text-align: center; font-weight: 600; font-size: 14px; width: 50%; vertical-align: middle; font-family: Arial, sans-serif;">
+              <tr style="background: #1d4ed8; color: white;">
+                <th style="border: 2px solid #374151; padding: 16px; text-align: center; font-weight: bold; font-size: 16px; font-family: Arial, sans-serif;">
                   Jumlah Cash Pick Up (NOA)
                 </th>
-                <th style="padding: 12px; text-align: center; font-weight: 600; font-size: 14px; width: 50%; vertical-align: middle; font-family: Arial, sans-serif;">
+                <th style="border: 2px solid #374151; padding: 16px; text-align: center; font-weight: bold; font-size: 16px; font-family: Arial, sans-serif;">
                   Foto (Struk Terakhir)
                 </th>
               </tr>
             </thead>
             <tbody>
               ${itemsHTML}
-              
-              <!-- Summary - MATCHING REFERENCE -->
-              <tr style="background: #2563eb; color: white; border-top: 2px solid #4a5568;">
-                <td style="border-right: 1px solid #4a5568; padding: 12px; font-weight: 600; text-align: center; font-size: 12px; vertical-align: middle; font-family: Arial, sans-serif;">
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Summary Table - EXACTLY MATCHING REFERENCE -->
+        <div style="margin-top: 32px;">
+          <table style="width: 100%; border-collapse: collapse; border: 2px solid #374151;">
+            <tbody>
+              <tr style="background: #1d4ed8; color: white; border: 2px solid #374151;">
+                <td style="border: 2px solid #374151; padding: 16px; font-weight: bold; text-align: center; font-size: 16px; font-family: Arial, sans-serif;">
                   Pembukaan Tabungan (NOA)
                 </td>
-                <td style="padding: 12px; text-align: center; font-weight: bold; font-size: 18px; vertical-align: middle; font-family: Arial, sans-serif;">
-                  <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
-                    ${reportData.summary.total || '1'}
-                  </div>
+                <td style="border: 2px solid #374151; padding: 16px; text-align: center; font-weight: bold; font-size: 24px; font-family: Arial, sans-serif;">
+                  ${reportData.summary.total || '1'}
                 </td>
               </tr>
-              <tr style="background: #2563eb; color: white; border-top: 1px solid #4a5568;">
-                <td style="border-right: 1px solid #4a5568; padding: 12px; font-weight: 600; text-align: center; font-size: 12px; vertical-align: middle; font-family: Arial, sans-serif;">
+              <tr style="background: #1d4ed8; color: white; border: 2px solid #374151;">
+                <td style="border: 2px solid #374151; padding: 16px; font-weight: bold; text-align: center; font-size: 16px; font-family: Arial, sans-serif;">
                   Pembukaan Deposit (NOA)
                 </td>
-                <td style="padding: 12px; text-align: center; font-weight: bold; font-size: 18px; vertical-align: middle; font-family: Arial, sans-serif;">
-                  <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
-                    ${reportData.summary.deposits || '0'}
-                  </div>
+                <td style="border: 2px solid #374151; padding: 16px; text-align: center; font-weight: bold; font-size: 24px; font-family: Arial, sans-serif;">
+                  ${reportData.summary.deposits || '0'}
                 </td>
               </tr>
-              <tr style="background: #2563eb; color: white; border-top: 1px solid #4a5568;">
-                <td style="border-right: 1px solid #4a5568; padding: 12px; font-weight: 600; text-align: center; font-size: 12px; vertical-align: middle; font-family: Arial, sans-serif;">
+              <tr style="background: #1d4ed8; color: white; border: 2px solid #374151;">
+                <td style="border: 2px solid #374151; padding: 16px; font-weight: bold; text-align: center; font-size: 16px; font-family: Arial, sans-serif;">
                   Rekomendasi Kredit
                 </td>
-                <td style="padding: 12px; text-align: center; font-weight: bold; font-size: 18px; vertical-align: middle; font-family: Arial, sans-serif;">
-                  <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
-                    ${reportData.summary.recommendations || '0'}
-                  </div>
+                <td style="border: 2px solid #374151; padding: 16px; text-align: center; font-weight: bold; font-size: 24px; font-family: Arial, sans-serif;">
+                  ${reportData.summary.recommendations || '0'}
                 </td>
               </tr>
             </tbody>
@@ -422,9 +430,9 @@ const Index = () => {
           </h1>
           
           <p className="text-xl text-slate-600 max-w-3xl mx-auto mb-10 leading-relaxed">
-            Sistem laporan profesional dengan standar A4 internasional. 
+            Sistem laporan profesional dengan format yang sesuai referensi. 
             <br />
-            <span className="font-semibold text-blue-700">Padding presisi 3cm top/bottom, 4cm left/right</span> untuk hasil cetak yang sempurna.
+            <span className="font-semibold text-blue-700">Layout dan styling yang presisi untuk hasil yang sempurna</span>
           </p>
 
           {/* Professional Feature Grid */}
@@ -433,16 +441,16 @@ const Index = () => {
               <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4 mx-auto">
                 <Zap className="w-6 h-6 text-blue-600" />
               </div>
-              <h3 className="font-bold text-slate-900 mb-2">A4 Standard</h3>
-              <p className="text-sm text-slate-600">Ukuran 794×1123px sesuai standar internasional</p>
+              <h3 className="font-bold text-slate-900 mb-2">Format Referensi</h3>
+              <p className="text-sm text-slate-600">Layout sesuai dengan gambar referensi yang diberikan</p>
             </div>
             
             <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200 hover:shadow-xl transition-all duration-300">
               <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4 mx-auto">
                 <Shield className="w-6 h-6 text-green-600" />
               </div>
-              <h3 className="font-bold text-slate-900 mb-2">Padding Presisi</h3>
-              <p className="text-sm text-slate-600">Margin 3:4 ratio untuk hasil profesional</p>
+              <h3 className="font-bold text-slate-900 mb-2">Styling Presisi</h3>
+              <p className="text-sm text-slate-600">Warna, font, dan ukuran yang tepat</p>
             </div>
             
             <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200 hover:shadow-xl transition-all duration-300">
@@ -485,7 +493,7 @@ const Index = () => {
                   </div>
                   Input Data Laporan
                 </h2>
-                <p className="text-blue-100 mt-3 text-lg">Lengkapi form di bawah untuk membuat laporan A4 profesional</p>
+                <p className="text-blue-100 mt-3 text-lg">Lengkapi form di bawah untuk membuat laporan sesuai referensi</p>
               </div>
               <div className="p-8">
                 <ReportForm reportData={reportData} setReportData={setReportData} />
@@ -497,13 +505,13 @@ const Index = () => {
             <div className="flex flex-col lg:flex-row gap-8 lg:items-center lg:justify-between">
               <div>
                 <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent mb-3">
-                  Preview Laporan A4
+                  Preview Laporan
                 </h2>
-                <p className="text-lg text-slate-600">Download dengan padding standar A4 profesional</p>
+                <p className="text-lg text-slate-600">Download dengan format sesuai referensi</p>
                 <div className="mt-4 flex flex-wrap gap-2">
-                  <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">794×1123px</span>
-                  <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">3cm top/bottom</span>
-                  <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">4cm left/right</span>
+                  <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">Format Referensi</span>
+                  <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">Layout Presisi</span>
+                  <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">Styling Akurat</span>
                 </div>
               </div>
               
@@ -517,14 +525,14 @@ const Index = () => {
                   {isDownloading ? (
                     <>
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-3"></div>
-                      <span>Memproses A4...</span>
+                      <span>Memproses...</span>
                     </>
                   ) : (
                     <>
                       <FileImage className="w-5 h-5 mr-3" />
                       <div className="text-left">
                         <div className="text-sm font-bold">Download PNG</div>
-                        <div className="text-xs opacity-90">A4 Standard</div>
+                        <div className="text-xs opacity-90">Sesuai Referensi</div>
                       </div>
                     </>
                   )}
@@ -537,42 +545,42 @@ const Index = () => {
                 >
                   <Printer className="w-5 h-5 mr-3" />
                   <div className="text-left">
-                    <div className="text-sm font-bold">Print A4</div>
+                    <div className="text-sm font-bold">Print</div>
                     <div className="text-xs opacity-90">Direct Print</div>
                   </div>
                 </Button>
               </div>
             </div>
 
-            {/* Professional A4 Info Panel */}
+            {/* Professional Info Panel */}
             <div className="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-2xl p-6">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center flex-shrink-0">
                   <CheckCircle2 className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h4 className="text-xl font-bold text-blue-900 mb-3">Standar A4 Professional</h4>
+                  <h4 className="text-xl font-bold text-blue-900 mb-3">Format Sesuai Referensi</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-blue-800">
                     <div>
-                      <h5 className="font-semibold mb-2">📐 Dimensi Kertas</h5>
+                      <h5 className="font-semibold mb-2">🎨 Visual Elements</h5>
                       <ul className="text-sm space-y-1">
-                        <li>• <strong>Width:</strong> 794px (21cm)</li>
-                        <li>• <strong>Height:</strong> 1123px (29.7cm)</li>
-                        <li>• <strong>DPI:</strong> 96 (Standard Web)</li>
+                        <li>• <strong>Header:</strong> Blue bar dengan title</li>
+                        <li>• <strong>Layout:</strong> Company info + line</li>
+                        <li>• <strong>Colors:</strong> Blue theme matching</li>
                       </ul>
                     </div>
                     <div>
-                      <h5 className="font-semibold mb-2">📏 Padding Margin</h5>
+                      <h5 className="font-semibold mb-2">📊 Table Structure</h5>
                       <ul className="text-sm space-y-1">
-                        <li>• <strong>Top/Bottom:</strong> 3cm (113px)</li>
-                        <li>• <strong>Left/Right:</strong> 4cm (151px)</li>
-                        <li>• <strong>Content Area:</strong> 492×897px</li>
+                        <li>• <strong>Numbers:</strong> Large blue font (96px)</li>
+                        <li>• <strong>Images:</strong> 180x160px container</li>
+                        <li>• <strong>Summary:</strong> Blue background rows</li>
                       </ul>
                     </div>
                   </div>
                   <div className="mt-4 p-3 bg-white/70 rounded-xl">
                     <p className="text-sm text-blue-700">
-                      <strong>🎯 Output:</strong> File PNG berkualitas tinggi (2x scale) siap untuk pencetakan profesional dengan margin standar office.
+                      <strong>🎯 Output:</strong> File PNG dengan layout dan styling yang persis sama dengan gambar referensi yang Anda berikan.
                     </p>
                   </div>
                 </div>
@@ -589,7 +597,7 @@ const Index = () => {
                   </div>
                   <div>
                     <span className="font-bold text-slate-800">Preview Mode</span>
-                    <span className="text-slate-600 ml-2">A4 Standard (794×1123px) • Padding 3:4</span>
+                    <span className="text-slate-600 ml-2">Format Referensi • Layout Presisi</span>
                   </div>
                 </div>
               </div>
